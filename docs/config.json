@@ -1,8 +1,8 @@
 {
   "catalog_name": "SFB1451 Catalog",
   "logo_path": "",
-  "link_color": "#fba304",
-  "link_hover_color": "#af7714",
+  "link_color": "#142f64",
+  "link_hover_color": "#1f99d6",
   "property_source": {
     "dataset": {
       "dataset_id": "metalad_core",
