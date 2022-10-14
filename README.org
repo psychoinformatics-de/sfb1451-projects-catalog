@@ -1,0 +1,44 @@
+#+title: SFB 1451 publication catalog
+
+* Repository overview
+The catalog is placed in the =docs= directory (to allow other repository content at root level),
+and served to GitHub pages from there.
+
+* Required extensions
+The following DataLad extensions are required to generate the catalog:
+[[https://github.com/datalad/datalad-next][DataLad-next]] is used to interact with WebDAV remotes,
+[[https://github.com/datalad/datalad-metalad][DataLad-metalad]] provides metadata extraction,
+[[https://github.com/mslw/datalad-wackyextra][DataLad-wackyextra]] provides custom metadata extractors and translators,
+[[https://github.com/datalad/datalad-catalog][DataLad-catalog]] is used to generate the catalog
+
+* Generation
+Project datasets are tracked in the =Projects= superdataset.
+
+** To obtain a subdataset:
+#+begin_src bash
+  datalad clone -d . webdavs://<base URL>/Projects/<Project>/<subfolder> <Project>
+#+end_src
+(using project names as folder names, because these would be displayed as subdataset names).
+
+Tip: until [[https://github.com/datalad/datalad-next/issues/108][datalad-next/issues/108]] makes it automatic, storage remote can be reconfigured with:
+#+begin_src bash
+  git annex initremote my-sciebo-storage --private --sameas <name or uuid> exporttree=yes type=webdav url="<url>"
+#+end_src
+
+** Extract, translate, and add metadata
+Extraction:
+#+begin_src bash
+  datalad meta-extract -d Projects metalad_core >! extracted.json
+  datalad meta-extract -d Projects metalad_studtminimeta >> extracted.json
+  datalad meta-extract -d Projects we_cff >> extracted.json
+  datalad meta-extract -d Projects we_ris >> extracted.json
+  datalad meta-extract -d Projects nbib >> extracted.json
+#+end_src
+Translation:
+#+begin_src bash
+  datalad wacky-translate -i extracted.json -o translated.json
+#+end_src
+Addition:
+#+begin_src bash
+  datalad catalog add -c catalog/docs -m translated.json
+#+end_src
