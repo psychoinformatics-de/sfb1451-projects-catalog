@@ -1,5 +1,5 @@
 {
-  "catalog_name": "DataCat",
+  "catalog_name": "SFB1451 Catalog",
   "logo_path": "",
   "link_color": "#fba304",
   "link_hover_color": "#af7714",
@@ -18,7 +18,7 @@
       ],
       "doi": "",
       "url": "merge",
-      "authors": "merge",
+      "authors": "metalad_studyminimeta",
       "keywords": "merge",
       "license": "",
       "funding": "merge",
