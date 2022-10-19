@@ -28,17 +28,18 @@ Tip: until [[https://github.com/datalad/datalad-next/issues/108][datalad-next/is
 ** Extract, translate, and add metadata
 Extraction:
 #+begin_src bash
-  datalad meta-extract -d Projects metalad_core >! extracted.json
-  datalad meta-extract -d Projects metalad_studtminimeta >> extracted.json
-  datalad meta-extract -d Projects we_cff >> extracted.json
-  datalad meta-extract -d Projects we_ris >> extracted.json
-  datalad meta-extract -d Projects nbib >> extracted.json
+  datalad meta-extract -d Projects metalad_core >! extracted.jsonl
+  datalad meta-extract -d Projects metalad_studyminimeta >> extracted.jsonl
+  datalad meta-extract -d Projects/XYZ we_cff >> extracted.jsonl
+  datalad meta-extract -d Projects/XYZ we_ris >> extracted.jsonl
+  datalad meta-extract -d Projects/XYZ nbib >> extracted.jsonl
 #+end_src
 Translation:
 #+begin_src bash
-  datalad wacky-translate -i extracted.json -o translated.json
+  datalad wacky-translate -i extracted.jsonl -o translated.jsonl
 #+end_src
 Addition:
 #+begin_src bash
-  datalad catalog add -c catalog/docs -m translated.json
+  datalad catalog add -c catalog/docs -m translated.jsonl
+  datalad catalog set-super -c catalog/docs -i <id> -v <version>
 #+end_src
