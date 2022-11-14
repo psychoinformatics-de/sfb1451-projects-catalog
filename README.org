@@ -9,7 +9,7 @@ The following DataLad extensions are required to generate the catalog:
 [[https://github.com/datalad/datalad-next][DataLad-next]] is used to interact with WebDAV remotes,
 [[https://github.com/datalad/datalad-metalad][DataLad-metalad]] provides metadata extraction,
 [[https://github.com/mslw/datalad-wackyextra][DataLad-wackyextra]] provides custom metadata extractors and translators,
-[[https://github.com/datalad/datalad-catalog][DataLad-catalog]] is used to generate the catalog
+[[https://github.com/datalad/datalad-catalog][DataLad-catalog]] is used to generate the catalog.
 
 * Generation
 Project datasets are tracked in the =Projects= superdataset.
@@ -32,7 +32,7 @@ Extraction:
   datalad meta-extract -d Projects metalad_studyminimeta >> extracted.jsonl
   datalad meta-extract -d Projects/XYZ we_cff >> extracted.jsonl
   datalad meta-extract -d Projects/XYZ we_ris >> extracted.jsonl
-  datalad meta-extract -d Projects/XYZ nbib >> extracted.jsonl
+  datalad meta-extract -d Projects/XYZ we_nbib >> extracted.jsonl
 #+end_src
 Translation:
 #+begin_src bash
