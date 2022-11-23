@@ -234,7 +234,8 @@ const datasetView = {
           "dataset_" + disp_dataset.id_and_version + ".json";
         // URL
         disp_dataset.is_github = false; // Github / gitlab / url / binder
-        disp_dataset.is_gitlab = false; // Github / gitlab / url / binder
+        disp_dataset.is_gin = false;
+        disp_dataset.is_gitlab = false;
         disp_dataset.url = "";
 
         if (
@@ -246,6 +247,14 @@ const datasetView = {
             if (dataset.url[i].toLowerCase().indexOf("github") >= 0) {
               disp_dataset.is_github = true;
               disp_dataset.url = dataset.url[i];
+            }
+            if (dataset.url[i].toLowerCase().indexOf("gin.g-node") >= 0) {
+              disp_dataset.is_gin = true;
+              disp_dataset.url = dataset.url[i];
+              if (disp_dataset.url.startsWith("ssh://")) {
+                disp_dataset.url = disp_dataset.url.replace("ssh://git@", "https://")
+                  .replace(/\.git$/m, "");
+              }
             }
           }
           if (!disp_dataset.url) {
