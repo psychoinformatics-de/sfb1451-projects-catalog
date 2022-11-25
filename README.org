@@ -1,5 +1,7 @@
 #+title: SFB 1451 publication catalog
 
+Website: https://psychoinformatics-de.github.io/sfb1451-projects-catalog
+
 * Repository overview
 The catalog is placed in the =docs= directory (to allow other repository content at root level),
 and served to GitHub pages from there.
