@@ -1,0 +1,39 @@
+{
+    "provider": {
+	"module": "datalad_metalad.pipeline.provider.datasettraverse",
+	"class": "DatasetTraverser",
+	"name": "traverser",
+	"arguments": {
+	    "item_type": "dataset"
+	}
+    },
+    "processors": [
+	{
+	    "module": "datalad_metalad.pipeline.processor.extract",
+	    "class": "MetadataExtractor",
+	    "name": "cffextractor",
+	    "arguments": {
+		"extractor_type": "dataset",
+		"extractor_name": "we_cff"
+	    }
+	},
+	{
+	    "module": "datalad_metalad.pipeline.processor.extract",
+	    "class": "MetadataExtractor",
+	    "name": "risextractor",
+	    "arguments": {
+		"extractor_type": "dataset",
+		"extractor_name": "we_ris"
+	    }
+	},
+	{
+	    "module": "datalad_metalad.pipeline.processor.extract",
+	    "class": "MetadataExtractor",
+	    "name": "nbibextractor",
+	    "arguments": {
+		"extractor_type": "dataset",
+		"extractor_name": "we_nbib"
+	    }
+	}
+    ]
+}

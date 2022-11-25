@@ -45,3 +45,30 @@ Addition:
   datalad catalog add -c catalog/docs -m translated.jsonl
   datalad catalog set-super -c catalog/docs -i <id> -v <version>
 #+end_src
+
+* Generation - advanced
+
+** Use meta-conduct for several extractors
+
+Attached =project_extract_pipeline.json= bundles `we_cff`, `we_ris`, and `we_nbib` extractors:
+
+#+begin_src bash
+  datalad -f json meta-conduct catalog/project_extract_pipeline.json \
+	  traverser.top_level_dir=Projects/XYZ | \
+      jq -c '.pipeline_data.result.metadata | .[].metadata_record' >> extracted.jsonl
+#+end_src
+
+** Extract from a single subdataset under a project
+
+When running extractors, run those for user-provided metadata first, and metalad_core last.
+This way, user-provided authorship information will take precedence (due to current configuration).
+The metalad_core extractor will contain subdataset url if the subdataset was installed from that url.
+
+#+begin_src bash
+  # metalad core for project dataset
+  datalad meta-extract -d Projects/XYZ metalad_core >> extracted.jsonl
+  # user-provided metadata (e.g. authors)
+  datalad meta-extract -d Projects/XYZ/subds datacite_gin >> extracted.jsonl
+  # metalad core for subdataset (dataset url)
+  datalad meta-extract -d Projects/XYZ/subds metalad_core >> extracted.jsonl
+#+end_src
