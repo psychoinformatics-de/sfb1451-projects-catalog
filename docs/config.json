@@ -22,17 +22,22 @@
         "source": "any"
       },
       "name": {
-        "rule": "single",
-        "source": "metalad_studyminimeta"
+        "rule": "priority",
+        "source": [
+          "we_cff",
+          "datacite_gin",
+          "metalad_studyminimeta"
+        ]
       },
       "short_name": {
       },
       "description": {
         "rule": "priority",
         "source": [
-          "catalog_readme",
-          "metalad_studyminimeta",
+          "we_cff",
           "datacite_gin",
+          "metalad_studyminimeta",
+          "catalog_readme",
           "bids_dataset"
         ]
       },
@@ -43,8 +48,14 @@
         "source": "any"
       },
       "authors": {
-        "rule": "merge",
-        "source": "any"
+        "rule": "priority",
+        "source": [
+          "we_cff",
+          "datacite_gin",
+          "metalad_studyminimeta",
+          "bids_dataset",
+          "metalad_core"
+        ]
       },
       "keywords": {
         "rule": "merge",
