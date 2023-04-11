@@ -25,23 +25,22 @@ class MyEncoder(json.JSONEncoder):
 
 # allow manual specification
 parser = argparse.ArgumentParser()
-parser.add_argument("superds", type=Path, help="Dataset with all the projects")
+parser.add_argument("dataset", type=Path, help="Dataset to extract from")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
-parser.add_argument("project", help="Project name")
 args = parser.parse_args()
 
 # extraction
 res = meta_conduct(
     configuration=str(Path(__file__).parent.joinpath("project_extract_pipeline.json")),
     arguments=[
-        f"traverser.top_level_dir={args.superds / args.project}",
+        f"traverser.top_level_dir={args.dataset}",
     ],
     return_type="item-or-list",
 )
 
 metadata = res["pipeline_data"]["result"]["metadata"]
 
-extracted_path = args.outdir.joinpath(f"{args.project}.jsonl")
+extracted_path = args.outdir.joinpath(f"{args.dataset.name}.jsonl")
 
 with extracted_path.open("w") as json_file:
     for md in metadata:

@@ -11,6 +11,15 @@
 	{
 	    "module": "datalad_metalad.pipeline.processor.extract",
 	    "class": "MetadataExtractor",
+	    "name": "coreextractor",
+	    "arguments": {
+		"extractor_type": "dataset",
+		"extractor_name": "metalad_core"
+	    }
+	},
+	{
+	    "module": "datalad_metalad.pipeline.processor.extract",
+	    "class": "MetadataExtractor",
 	    "name": "cffextractor",
 	    "arguments": {
 		"extractor_type": "dataset",
