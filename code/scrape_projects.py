@@ -23,7 +23,7 @@ def split_name(person_str):
     global name_regex
     global name_exceptions
 
-    if predefined:=name_exceptions.get(person_str) is not None:
+    if (predefined := name_exceptions.get(person_str)) is not None:
         return predefined
     match = re.match(name_regex, person_str)
     if match is None:
