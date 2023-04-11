@@ -34,6 +34,15 @@
 		"extractor_type": "dataset",
 		"extractor_name": "we_nbib"
 	    }
+	},
+	{
+	    "module": "datalad_metalad.pipeline.processor.extract",
+	    "class": "MetadataExtractor",
+	    "name": "crossrefextractor",
+	    "arguments": {
+		"extractor_type": "dataset",
+		"extractor_name": "we_crossref"
+	    }
 	}
     ]
 }
