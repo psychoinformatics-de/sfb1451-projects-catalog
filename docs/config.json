@@ -3,6 +3,15 @@
   "logo_path": "",
   "link_color": "#142f64",
   "link_hover_color": "#1f99d6",
+  "social_links": {
+    "about": "https://www.crc1451.uni-koeln.de/",
+    "documentation": "https://rdm.sfb1451.de/publication-catalog/",
+    "github": null,
+    "twitter": "https://twitter.com/crc1451"
+  },
+  "dataset_options": {
+      "include_metadata_export": false
+  },
   "property_sources": {
     "dataset": {
       "dataset_id": {
