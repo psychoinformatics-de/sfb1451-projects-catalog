@@ -18,7 +18,8 @@ class MyEncoder(json.JSONEncoder):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
-parser.add_argument("output", type=Path, help="Extracted metadata file")
+# parser.add_argument("output", type=Path, help="Extracted metadata file")
+parser.add_argument("outdir", type=Path, help="Metadata output directory")
 parser.add_argument("extractors", metavar="name", nargs="+", help="Extractors to use")
 parser.add_argument(
     "--add-super",
@@ -29,8 +30,17 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+if args.add_super is None:
+    # we assume it's a project's subdataset
+    ds_name = args.dataset.name
+    project_name = args.dataset.parent.name
+    extracted_path = args.outdir.joinpath(f"{project_name}_{ds_name}.jsonl")
+else:
+    ds_name = args.dataset.name
+    extracted_path = args.outdir.joinpath(f"{ds_name}.jsonl")
+
 # extract
-with args.output.open("w") as json_file:
+with extracted_path.open("w") as json_file:
     for extractor_name in args.extractors:
         res = meta_extract(
             extractorname=extractor_name,
@@ -43,11 +53,11 @@ with args.output.open("w") as json_file:
         json_file.write("\n")
 
 # translate
-translated_name = f"{args.output.stem}.cat.jsonl"
-translated_path = args.output.parent.joinpath(translated_name)
+translated_name = f"{extracted_path.stem}.cat.jsonl"
+translated_path = extracted_path.parent.joinpath(translated_name)
 
 with translated_path.open("w") as json_file:
-    for res in catalog("translate", metadata=args.output, return_type="generator"):
+    for res in catalog("translate", metadata=extracted_path, return_type="generator"):
         assert res["status"] == "ok"  # crude check
         json.dump(res["translated_metadata"], json_file)
         json_file.write("\n")
