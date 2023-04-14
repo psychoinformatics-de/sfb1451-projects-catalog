@@ -29,15 +29,15 @@ def split_name(person_str):
     if match is None:
         breakpoint()
     person = {
-        "given-names": match.group("first"),
-        "family-names": match.group("last"),
+        "given-names": match.group("first").capitalize(),
+        "family-names": match.group("last").capitalize(),
     }
     if match.group("mid") is not None:
         mid = match.group("mid").rstrip()
         if mid in ("von", "van"):
             person["name-particle"] = mid
         else:
-            person["given-names"] = " ".join([person["given-names"], mid])
+            person["given-names"] = " ".join([person["given-names"], mid.capitalize()])
     return person
 
 def parse_project(url):
@@ -65,7 +65,7 @@ def parse_project(url):
 
     citation = {
         "title": title,
-        "authors": [split_name(person) for person in people],
+        "authors": [split_name(person) for person in people if person.lower() != "open position"],
         "abstract": promo_description.text.rstrip(),
         "cff-version": "1.2.0",
         "message": "Generated with data scraped from crc1451.uni-koeln.de",
