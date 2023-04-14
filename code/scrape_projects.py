@@ -47,7 +47,14 @@ def parse_project(url):
     request = requests.get(url)
     soup = BeautifulSoup(request.text, 'html.parser')
 
+    h1 = soup.find('h1')
     h3 = soup.find_all('h3')
+
+    if h1.text.strip().lower() == "junior research group":
+        project_id = "JRG"
+    else:
+        # just the codename
+        project_id = h1.text.rstrip().split()[-1]
 
     if re.match(name_regex, h3[1].text.rstrip()) is not None:
         # typically only the first h3 is the project title
@@ -58,13 +65,17 @@ def parse_project(url):
         title = h3[0].text + " " + h3[1].text
         people = [tag.text.rstrip() for tag in h3[2:]]
 
+    if (match := re.match(r"([Dd]r.?) (\w+)$", title)) is not None:
+        # project title can be "Dr. Name" but not necessarily capitalized
+        title = f"{match.group(1).capitalize()} {match.group(2).capitalize()}"
+
     promo_description = soup.find(
         name="div",
         attrs={"class": "et_pb_promo_description"},
     )
 
     citation = {
-        "title": title,
+        "title": f"{project_id}: {title}",
         "authors": [split_name(person) for person in people if person.lower() != "open position"],
         "abstract": promo_description.text.rstrip(),
         "cff-version": "1.2.0",
