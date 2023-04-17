@@ -16,6 +16,30 @@ class MyEncoder(json.JSONEncoder):
         return super.default(obj)
 
 
+def postprocess(result):
+    """post-translation tweaks"""
+    md = result["translated_metadata"]
+
+    # try to split studyminimeta funding into name; identifier; description
+    if md["metadata_sources"]["sources"][0]["source_name"] == "metalad_studyminimeta":
+        funding = md["funding"]
+        new_funding = []
+        for fund_source in funding:
+            if len(fund_parts := fund_source["name"].split(";")) == 3:
+                new_funding.append(
+                    {
+                        "name": fund_parts[0].strip(),
+                        "identifier": fund_parts[1].strip(),
+                        "description": fund_parts[2].strip(),
+                    }
+                )
+            else:
+                new_funding.append(fund_source)
+        md["funding"] = new_funding
+
+    return md
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
 # parser.add_argument("output", type=Path, help="Extracted metadata file")
@@ -59,7 +83,8 @@ translated_path = extracted_path.parent.joinpath(translated_name)
 with translated_path.open("w") as json_file:
     for res in catalog("translate", metadata=extracted_path, return_type="generator"):
         assert res["status"] == "ok"  # crude check
-        json.dump(res["translated_metadata"], json_file)
+        metadata_item = postprocess(res)
+        json.dump(metadata_item, json_file)
         json_file.write("\n")
 
 # update catalog if requested
