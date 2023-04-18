@@ -51,17 +51,24 @@ parser.add_argument(
     metavar="cat",
     help="Add translated metadata to catalog and update super",
 )
+parser.add_argument(
+    "--filename",
+    help="Use this file name instead of deriving from folder names",
+)
 
 args = parser.parse_args()
 
-if args.add_super is None:
+# obtain or generate name for metadata file
+if args.filename is not None:
+    extracted_path = args.outdir.joinpath(args.filename)
+elif args.add_super is not None:
+    ds_name = args.dataset.name
+    extracted_path = args.outdir.joinpath(f"{ds_name}.jsonl")
+else:
     # we assume it's a project's subdataset
     ds_name = args.dataset.name
     project_name = args.dataset.parent.name
     extracted_path = args.outdir.joinpath(f"{project_name}_{ds_name}.jsonl")
-else:
-    ds_name = args.dataset.name
-    extracted_path = args.outdir.joinpath(f"{ds_name}.jsonl")
 
 # extract
 with extracted_path.open("w") as json_file:
