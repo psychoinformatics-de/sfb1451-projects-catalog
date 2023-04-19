@@ -142,7 +142,10 @@ const datasetView = () =>
                   if (dataset.url[i].toLowerCase().indexOf("gin.g-node") >= 0) {
                     disp_dataset.is_gin = true;
                     disp_dataset.url = dataset.url[i];
+                    disp_dataset.url = disp_dataset.url.replace('ssh://', '');
                     disp_dataset.url = disp_dataset.url.replace('git@gin.g-node.org:', 'https://gin.g-node.org');
+                    disp_dataset.url = disp_dataset.url.replace('git@gin.g-node.org', 'https://gin.g-node.org');
+                    disp_dataset.url = disp_dataset.url.replace('.git', '');
                   }
                 }
                 if (!disp_dataset.url) {
@@ -211,11 +214,8 @@ const datasetView = () =>
                 c.dirs_from_path[c.dirs_from_path.length - 1]
                   .toLowerCase()
                   .indexOf(this.search_text.toLowerCase()) >= 0 ||
-                // || (c.authors.some(e => e.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0))
-                c.authors.some(
-                  (f) =>
-                    f.name.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0
-                )
+                c.authors.some((f) =>f.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 ) ||
+                c.authors.some((f) =>f.familyName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 )
               );
             });
           },
@@ -268,6 +268,10 @@ const datasetView = () =>
             // https://stackoverflow.com/questions/60581285/execcommand-is-now-obsolete-whats-the-alternative
             // https://www.sitepoint.com/clipboard-api/
             selectText = document.getElementById("clone_code").textContent;
+            selectText = '\n      ' + selectText + '  \n\n  '
+            console.log(selectText)
+            selectText = selectText.replace(/^\s+|\s+$/g, '');
+            console.log(selectText)
             navigator.clipboard
               .writeText(selectText)
               .then(() => {})
