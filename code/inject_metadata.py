@@ -1,9 +1,17 @@
+"""Add some predefined metadata to the catalog
+
+Given a dataset, look up dataset's ID and version, and use it to add
+predefined metadata to the catalog.
+
+"""
+
 import argparse
 from datetime import datetime
 import json
 from pathlib import Path
 import subprocess
 import tempfile
+import tomli
 
 from datalad.api import Dataset, catalog
 
@@ -23,6 +31,7 @@ def get_ds_info(ds_path):
 
 
 def get_metadata_source():
+    """Create metadata_sources dict required by catalog schema"""
     source = {
         "key_source_map": {},
         "sources": [
@@ -39,6 +48,7 @@ def get_metadata_source():
 
 
 def new_meta_item(ds_path):
+    """Create a minimal valid dataset metadata blob in catalog schema"""
     ds = Dataset(ds_path)
     meta_item = {
         "type": "dataset",
@@ -50,6 +60,7 @@ def new_meta_item(ds_path):
     return meta_item
 
 
+# Command line input
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "dataset",
@@ -57,11 +68,16 @@ parser.add_argument(
     type=Path,
 )
 parser.add_argument("--funding", help="Add funding info", action="store_true")
+parser.add_argument("--keywords", help="Add keywords", action="store_true")
 args = parser.parse_args()
 
-if not any((args.funding,)):
+if not any((args.funding, args.keywords)):
     # can be more
     parser.error("No options specified, nothing to do")
+
+# Load hand-generated values
+with open(Path(__file__).parent / "manually_entered.toml", "rb") as f:
+    manually_entered = tomli.load(f)
 
 # Use specified dataset path to get id, version
 meta_item = new_meta_item(args.dataset)
@@ -76,6 +92,12 @@ if args.funding:
             "description": "SFB1451: Key mechanisms of motor control in health and disease",
         }
     ]
+
+if args.keywords:
+    project_name = args.dataset.name  # assume dataset tld = project name
+    keywords = manually_entered["keywords"].get(project_name)
+    if keywords is not None:
+        meta_item["keywords"] = keywords
 
 with tempfile.NamedTemporaryFile(mode="w+t") as f:
     json.dump(meta_item, f)
