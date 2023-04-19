@@ -478,6 +478,53 @@ const datasetView = () =>
               }
             }
           },
+          tabsChanged(currentTabs, previousTabs) {
+            console.log("TABS-CHANGED-EVENT")
+            console.log('current')
+            console.log(currentTabs)
+            console.log('previous')
+            console.log(previousTabs)
+            this.setCorrectTab(
+              this.$root.selectedDataset.has_subdatasets,
+              this.$root.selectedDataset.has_files
+            )
+          },
+          setCorrectTab(has_subdatasets, has_files) {
+            // now set the correct tab:
+            var tabs = this.$refs['alltabs'].$children.filter(
+              child => typeof child.$vnode.key === 'string' || child.$vnode.key instanceof String
+            ).map(child => child.$vnode.key)
+            var tab_param = this.$route.params.tab_name;
+            if (!tab_param) {
+              if (has_subdatasets) {
+                this.tabIndex = 0;
+              }
+              else {
+                if (has_files) {
+                  this.tabIndex = 1;
+                }
+                else {
+                  if (tabs.length > 2) {
+                    console.log('setting tabIndex = 2 (no datasets or files, has extra tabs)')
+                    this.tabIndex = 2;
+                  } else {
+                    console.log('setting tabIndex = 0 (no datasets or files or extra tabs)')
+                    this.tabIndex = 0;
+                  }
+                }
+              }
+            }
+            else {
+              selectTab = tabs.indexOf(tab_param)
+              if (selectTab >= 0) {
+                this.tabIndex = selectTab;
+                console.log('setting tabIndex = ' + selectTab + ' based on URLparam')
+              } else {
+                this.tabIndex = 0;
+              }
+            }
+          }
+
         },
         async beforeRouteUpdate(to, from, next) {
           var has_subdatasets, has_files
@@ -569,55 +616,34 @@ const datasetView = () =>
             this.$root.selectedDataset.subdatasets_available_count = subdatasets_available.length
             this.$root.selectedDataset.subdatasets_unavailable_count = subdatasets_unavailable.length
             this.subdatasets_ready = true;
-            has_subdatasets = true;
+            this.$root.selectedDataset.has_subdatasets = true;
           } else {
             this.$root.selectedDataset.subdatasets = [];
             this.$root.selectedDataset.subdatasets_count = 0
             this.$root.selectedDataset.subdatasets_available_count = 0
             this.$root.selectedDataset.subdatasets_unavailable_count = 0
             this.subdatasets_ready = true;
-            has_subdatasets = false;
-            // Now check file content
-            this.files_ready = false;
-            this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
-            this.files_ready = true;
-            if (
-              this.$root.selectedDataset.hasOwnProperty("tree") &&
-              this.$root.selectedDataset.tree instanceof Array &&
-              this.$root.selectedDataset.tree.length > 0
-            ) {
-              has_files = true;
-            }
-            else {
-              has_files = false;
-            }
+            this.$root.selectedDataset.has_subdatasets = false;
           }
-          // now set the correct tab:
-          var tab_param = this.$route.params.tab_name;
-          if (!tab_param) {
-            if (has_subdatasets) {
-              this.tabIndex = 0;
-            }
-            else {
-              if (has_files) {
-                this.tabIndex = 1;
-              }
-              else {
-                this.tabIndex = 2;
-              }
-            }
+          // Now check file content
+          this.files_ready = false;
+          this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
+          this.files_ready = true;
+          if (
+            this.$root.selectedDataset.hasOwnProperty("tree") &&
+            this.$root.selectedDataset.tree instanceof Array &&
+            this.$root.selectedDataset.tree.length > 0
+          ) {
+            this.$root.selectedDataset.has_files = true;
           }
           else {
-            tabs = this.$refs['alltabs'].$children.filter(
-              child => typeof child.$vnode.key === 'string' || child.$vnode.key instanceof String
-            ).map(child => child.$vnode.key)
-            selectTab = tabs.indexOf(tab_param)
-            if (selectTab >= 0) {
-              this.tabIndex = selectTab;
-            } else {
-              this.tabIndex = 0;
-            }
+            this.$root.selectedDataset.has_files = false;
           }
+          // now set the correct tab:
+          this.setCorrectTab(
+            this.$root.selectedDataset.has_subdatasets,
+            this.$root.selectedDataset.has_files
+          )
           next();
         },
         async created() {
@@ -682,55 +708,33 @@ const datasetView = () =>
             this.$root.selectedDataset.subdatasets_available_count = subdatasets_available.length
             this.$root.selectedDataset.subdatasets_unavailable_count = subdatasets_unavailable.length
             this.subdatasets_ready = true;
-            has_subdatasets = true;
+            this.$root.selectedDataset.has_subdatasets = true;
           } else {
             this.$root.selectedDataset.subdatasets = [];
             this.$root.selectedDataset.subdatasets_count = 0
             this.$root.selectedDataset.subdatasets_available_count = 0
             this.$root.selectedDataset.subdatasets_unavailable_count = 0
             this.subdatasets_ready = true;
-            has_subdatasets = false;
-            // Now check file content
-            this.files_ready = false;
-            this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
-            this.files_ready = true;
-            if (
-              this.$root.selectedDataset.hasOwnProperty("tree") &&
-              this.$root.selectedDataset.tree instanceof Array &&
-              this.$root.selectedDataset.tree.length > 0
-            ) {
-              has_files = true;
-            }
-            else {
-              has_files = false;
-            }
+            this.$root.selectedDataset.has_subdatasets = false;
           }
-          // now set the correct tab:
-          var tab_param = this.$route.params.tab_name;
-          if (!tab_param) {
-            if (has_subdatasets) {
-              this.tabIndex = 0;
-            }
-            else {
-              if (has_files) {
-                this.tabIndex = 1;
-              }
-              else {
-                this.tabIndex = 2;
-              }
-            }
+          // Now check file content
+          this.files_ready = false;
+          this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
+          this.files_ready = true;
+          if (
+            this.$root.selectedDataset.hasOwnProperty("tree") &&
+            this.$root.selectedDataset.tree instanceof Array &&
+            this.$root.selectedDataset.tree.length > 0
+          ) {
+            this.$root.selectedDataset.has_files = true;
           }
           else {
-            tabs = this.$refs['alltabs'].$children.filter(
-              child => typeof child.$vnode.key === 'string' || child.$vnode.key instanceof String
-            ).map(child => child.$vnode.key)
-            selectTab = tabs.indexOf(tab_param)
-            if (selectTab >= 0) {
-              this.tabIndex = selectTab;
-            } else {
-              this.tabIndex = 0;
-            }
+            this.$root.selectedDataset.has_files = false;
           }
+          this.setCorrectTab(
+            this.$root.selectedDataset.has_subdatasets,
+            this.$root.selectedDataset.has_files
+          )
         },
         mounted() {
           this.tag_options_filtered = this.tag_options;

@@ -142,7 +142,7 @@
       </b-card-body>
       <!-- BOTTOM SECTION WITH TABS-->
       <b-card-body>
-        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex" @activate-tab="newTabActivated" ref="alltabs">
+        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex" @activate-tab="newTabActivated" ref="alltabs" v-show="subdatasets_ready && files_ready" @changed="tabsChanged">
           <!-- SUBDATASETS -->
           <b-tab key="subdatasets" ref="tabelement">
             <template v-slot:title>
