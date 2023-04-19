@@ -145,6 +145,7 @@ const datasetView = () =>
                     disp_dataset.url = disp_dataset.url.replace('ssh://', '');
                     disp_dataset.url = disp_dataset.url.replace('git@gin.g-node.org:', 'https://gin.g-node.org');
                     disp_dataset.url = disp_dataset.url.replace('git@gin.g-node.org', 'https://gin.g-node.org');
+                    disp_dataset.url = disp_dataset.url.replace('.git', '');
                   }
                 }
                 if (!disp_dataset.url) {
@@ -258,10 +259,19 @@ const datasetView = () =>
           },
         },
         methods: {
+          newTabActivated(newTabIndex, prevTabIndex, bvEvent) {
+            if (newTabIndex == 1) {
+              this.getFiles()
+            }
+          },
           copyCloneCommand(index) {
             // https://stackoverflow.com/questions/60581285/execcommand-is-now-obsolete-whats-the-alternative
             // https://www.sitepoint.com/clipboard-api/
             selectText = document.getElementById("clone_code").textContent;
+            selectText = '\n      ' + selectText + '  \n\n  '
+            console.log(selectText)
+            selectText = selectText.replace(/^\s+|\s+$/g, '');
+            console.log(selectText)
             navigator.clipboard
               .writeText(selectText)
               .then(() => {})
@@ -468,8 +478,59 @@ const datasetView = () =>
               }
             }
           },
+          tabsChanged(currentTabs, previousTabs) {
+            console.log("TABS-CHANGED-EVENT")
+            console.log('current')
+            console.log(currentTabs)
+            console.log('previous')
+            console.log(previousTabs)
+            this.setCorrectTab(
+              this.$root.selectedDataset.has_subdatasets,
+              this.$root.selectedDataset.has_files
+            )
+          },
+          setCorrectTab(has_subdatasets, has_files) {
+            // now set the correct tab:
+            var tabs = this.$refs['alltabs'].$children.filter(
+              child => typeof child.$vnode.key === 'string' || child.$vnode.key instanceof String
+            ).map(child => child.$vnode.key)
+            var tab_param = this.$route.params.tab_name;
+            if (!tab_param) {
+              if (has_subdatasets) {
+                this.tabIndex = 0;
+              }
+              else {
+                if (has_files) {
+                  this.tabIndex = 1;
+                }
+                else {
+                  if (tabs.length > 2) {
+                    console.log('setting tabIndex = 2 (no datasets or files, has extra tabs)')
+                    this.tabIndex = 2;
+                  } else {
+                    console.log('setting tabIndex = 0 (no datasets or files or extra tabs)')
+                    this.tabIndex = 0;
+                  }
+                }
+              }
+            }
+            else {
+              selectTab = tabs.indexOf(tab_param)
+              if (selectTab >= 0) {
+                this.tabIndex = selectTab;
+                console.log('setting tabIndex = ' + selectTab + ' based on URLparam')
+              } else {
+                this.tabIndex = 0;
+              }
+            }
+          }
+
         },
         async beforeRouteUpdate(to, from, next) {
+          var has_subdatasets, has_files
+          console.log('\n---BEFORE ROUTE UPDATE---\n')
+          console.log(to.params.tab_name)
+          console.log('\n---BEFORE ROUTE UPDATE---\n')
           this.tabIndex = 0;
           this.subdatasets_ready = false;
           this.dataset_ready = false;
@@ -555,16 +616,41 @@ const datasetView = () =>
             this.$root.selectedDataset.subdatasets_available_count = subdatasets_available.length
             this.$root.selectedDataset.subdatasets_unavailable_count = subdatasets_unavailable.length
             this.subdatasets_ready = true;
+            this.$root.selectedDataset.has_subdatasets = true;
           } else {
             this.$root.selectedDataset.subdatasets = [];
             this.$root.selectedDataset.subdatasets_count = 0
             this.$root.selectedDataset.subdatasets_available_count = 0
             this.$root.selectedDataset.subdatasets_unavailable_count = 0
             this.subdatasets_ready = true;
+            this.$root.selectedDataset.has_subdatasets = false;
           }
+          // Now check file content
+          this.files_ready = false;
+          this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
+          this.files_ready = true;
+          if (
+            this.$root.selectedDataset.hasOwnProperty("tree") &&
+            this.$root.selectedDataset.tree instanceof Array &&
+            this.$root.selectedDataset.tree.length > 0
+          ) {
+            this.$root.selectedDataset.has_files = true;
+          }
+          else {
+            this.$root.selectedDataset.has_files = false;
+          }
+          // now set the correct tab:
+          this.setCorrectTab(
+            this.$root.selectedDataset.has_subdatasets,
+            this.$root.selectedDataset.has_files
+          )
           next();
         },
         async created() {
+          var has_subdatasets, has_files
+          console.log('\n---CREATED---\n')
+          console.log(this.$route.params.tab_name)
+          console.log('\n---CREATED---\n')
           file = getFilePath(
             this.$route.params.dataset_id,
             this.$route.params.dataset_version,
@@ -622,13 +708,33 @@ const datasetView = () =>
             this.$root.selectedDataset.subdatasets_available_count = subdatasets_available.length
             this.$root.selectedDataset.subdatasets_unavailable_count = subdatasets_unavailable.length
             this.subdatasets_ready = true;
+            this.$root.selectedDataset.has_subdatasets = true;
           } else {
             this.$root.selectedDataset.subdatasets = [];
             this.$root.selectedDataset.subdatasets_count = 0
             this.$root.selectedDataset.subdatasets_available_count = 0
             this.$root.selectedDataset.subdatasets_unavailable_count = 0
             this.subdatasets_ready = true;
+            this.$root.selectedDataset.has_subdatasets = false;
           }
+          // Now check file content
+          this.files_ready = false;
+          this.$root.selectedDataset.tree = this.$root.selectedDataset["children"];
+          this.files_ready = true;
+          if (
+            this.$root.selectedDataset.hasOwnProperty("tree") &&
+            this.$root.selectedDataset.tree instanceof Array &&
+            this.$root.selectedDataset.tree.length > 0
+          ) {
+            this.$root.selectedDataset.has_files = true;
+          }
+          else {
+            this.$root.selectedDataset.has_files = false;
+          }
+          this.setCorrectTab(
+            this.$root.selectedDataset.has_subdatasets,
+            this.$root.selectedDataset.has_files
+          )
         },
         mounted() {
           this.tag_options_filtered = this.tag_options;

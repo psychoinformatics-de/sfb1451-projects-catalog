@@ -12,12 +12,11 @@
         </b-card-sub-title>
         <!-- DATASET VERSION ETC -->
         <b-card-text>
-          <strong>Version:</strong> {{selectedDataset.dataset_version.substring(0,7)}}&nbsp;
           <strong>Last updated:</strong> {{displayData.last_updated}}&nbsp;
           <strong>DOI:</strong> <span v-if="selectedDataset.doi"><a :href="selectedDataset.doi" target="_blank"> {{selectedDataset.doi.replace("https://doi.org/", "")}}</a></span>
-          <span v-else><em>not available</em></span>&nbsp;
+          <span v-else><em>unknown</em></span>&nbsp;
           <strong>License:</strong> <span v-if="selectedDataset.license && selectedDataset.license.name"><a :href="selectedDataset.license.url" target="_blank"> {{selectedDataset.license.name}}</a></span>
-          <span v-else><em>not available</em></span>
+          <span v-else><em>unknown</em></span>
         </b-card-text>
         <!-- DATASET BUTTONS -->
         <div style="text-align: left;">
@@ -132,9 +131,9 @@
 
             <b-card-text>
               <strong>Properties:</strong> <br>
-              <span><b-button disabled size="sm" variant="outline-dark">Subdatasets: {{selectedDataset.subdatasets_available_count}}</b-button>&nbsp;</span>
+              <span v-if="selectedDataset.subdatasets_available_count"><b-button disabled size="sm" variant="outline-dark">Subdatasets: {{selectedDataset.subdatasets_available_count}}</b-button>&nbsp;</span>
               <span v-if="selectedDataset.top_display && selectedDataset.top_display.length">
-                <span v-for="display_property in selectedDataset.top_display"><b-button disabled size="sm" variant="outline-dark">{{display_property.name}}: {{display_property.value}}</b-button>&nbsp;
+                <span v-for="display_property in selectedDataset.top_display" v-if="display_property.value"><b-button disabled size="sm" variant="outline-dark">{{display_property.name}}: {{display_property.value}}</b-button>&nbsp;</span>
               </span>
             </b-card-text>
           </b-col>
@@ -142,9 +141,9 @@
       </b-card-body>
       <!-- BOTTOM SECTION WITH TABS-->
       <b-card-body>
-        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex">
+        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex" @activate-tab="newTabActivated" ref="alltabs" v-show="subdatasets_ready && files_ready" @changed="tabsChanged">
           <!-- SUBDATASETS -->
-          <b-tab>
+          <b-tab key="subdatasets" ref="tabelement">
             <template v-slot:title>
               <i class="fas fa-list-ol"></i> Subdatasets <span v-if="subdatasets_ready">({{selectedDataset.subdatasets_available_count}})</span>
             </template>
@@ -172,9 +171,8 @@
                           Modified
                         </b-button>
                       </b-button-group>&nbsp;&nbsp;
-                      <b-form-input id="input-1" type="search" placeholder="Search by dataset or author name" required v-model="search_text" ref="text_search_input"></b-form-input>
+                      <b-form-input id="input-1" type="search" placeholder="Filter by dataset or author name" required v-model="search_text" ref="text_search_input"></b-form-input>
                     </b-input-group>
-                    
                     </b-col>
                     <b-col md="5">
                       <b-input-group>
@@ -185,7 +183,7 @@
                                 v-bind="inputAttrs"
                                 v-model="tag_text"
                                 v-on="inputHandlers"
-                                placeholder="Search by keyword (select or press enter to add)"
+                                placeholder="Filter by keyword (select or press enter to add)"
                                 class="form-control"
                                 ref="tag_search_input"
                                 @input="inputTagText()"
@@ -226,7 +224,6 @@
                         </span>
                         <b-card-text>
                           <small>
-                            <strong>Version:</strong> {{ds.dataset_version.substring(0,7)}}&nbsp;
                             <strong>Modified:</strong> {{getDateFromUTCseconds(ds.source_time)}}&nbsp;
                           </small>
                         </b-card-text>
@@ -243,12 +240,12 @@
             </span>
           </b-tab>
           <!-- FILE TREE -->
-          <b-tab @click="getFiles">
+          <b-tab @click="getFiles" key="content" ref="tabelement">
             <template v-slot:title>
-              <i class="far fa-folder"></i> Files
+              <i class="far fa-folder"></i> Content
             </template>
             <span v-if="files_ready">
-              <span v-if="!selectedDataset.tree || !selectedDataset.tree.length"><em>There are no files listed for the current dataset</em></span>
+              <span v-if="!selectedDataset.tree || !selectedDataset.tree.length"><em>There is no content available for the current dataset</em></span>
               <span v-else>
                 <b-card no-body class="p-2">
                   <ul>
@@ -279,7 +276,7 @@
           </b-tab>
           <!-- PUBLICATIONS -->
           <span v-if="selectedDataset.publications && selectedDataset.publications.length">
-            <b-tab>
+            <b-tab key="publications" ref="tabelement">
               <template v-slot:title>
                 <i class="fas fa-book"></i> Publications
               </template>
@@ -312,9 +309,9 @@
           </span>
           <!-- FUNDING -->
           <span v-if="selectedDataset.funding && selectedDataset.funding.length">
-            <b-tab>
+            <b-tab key="funding" ref="tabelement">
               <template v-slot:title>
-                <i class="fas fa-dollar-sign"></i> Funding
+                <i class="fas fa-building-columns"></i> Funding
               </template>
               <span v-if="!selectedDataset.funding || !selectedDataset.funding.length"><em>There are no funding sources listed for the current dataset</em></span>
               <span v-else v-for="fund in selectedDataset.funding">
@@ -337,7 +334,7 @@
           </span>
           <!-- PROVENANCE -->
           <span v-if="selectedDataset.provenance && selectedDataset.provenance.length">
-            <b-tab>
+            <b-tab key="provenance" ref="tabelement">
               <template v-slot:title>
                 <i class="fas fa-laptop-code"></i> Provenance
               </template>
@@ -449,7 +446,7 @@
           <!-- EXTRA TABS -->
           <span v-if="selectedDataset.additional_display && selectedDataset.additional_display.length">
             <span v-for="new_tab in selectedDataset.additional_display">
-              <b-tab>
+              <b-tab :key="new_tab.name" ref="tabelement">
                 <template v-slot:title>
                   <span v-if="new_tab.icon"><i :class="new_tab.icon"></i></span><span v-else><i class="fas fa-bars"></i></span> {{new_tab.name}}
                 </template>
