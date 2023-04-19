@@ -284,3 +284,39 @@ Z03 = [
     "data analysis",
     "data acquisition",
     ]
+
+[project_names]
+
+A01 = "Understanding plastin 3 and its interactors in motor neuron function and plasticity in health and disease"
+A02 = "Dysregulation of the autophagy-endolysosomal system as a putative pathological mechanism behind the motor control dysfunction"
+A03 = "Motor learning-induced plasticity of cerebellar Purkinje neuron connectivity"
+A04 = "The role of the reward system in obesity- and ageing-associated changes of motor behaviours"
+A05 = "Neural mechanisms underlying motor flexibility in fruit fly walking"
+A06 = "Sensory-motor pathways controlling voluntary movements in health and disease"
+A07 = "Role of synaptic lipid modulated cortical excitability in motor control"
+
+B01 = "Developmental mechanisms affecting motor skills and motor control"
+B02 = "Neural network maturation underlying top-down motor control and movement initiation in childhood and adolescence"
+B03 = "Modelling neural network dynamics underlying movements in health and disease"
+B04 = "Motor control under uncertainty in the healthy human brain"
+B05 = "Single-case predictions of motor abilities in health and disease"
+
+C01 = "Identification and selective stimulation of motor recovery-related functional networks after experimental stroke"
+C03 = "Striatal dopamine and volitional motor control: vigour, planning, and incentive salience"
+C04 = "Apraxia in Alzheimer’s disease: Plastic reorganization of praxis networks in response to chronically progressive dysfunction"
+C05 = "Reorganisation of the motor system following stroke"
+C06 = "Major depression as a transient functional lesion model of motor control"
+C07 = "Neural networks underlying motor tic formation and suppression"
+
+INF = "Data Management for Computational Modelling"
+JRG_Gatto = "Sensorimotor ADAPtation"
+JRG_Valtcheva = "Dr. Valtcheva"
+
+X01 = "Rehabilitation of motor deficits and restoration of functional networks after mild Traumatic Brain Injury (mTBI) by transcranial Direct Current Stimulation (tDCS)"
+X02 = "The interplay between sleep, depressivity and motor performance"
+X03 = "Predicting the effects of deep brain stimulation of the subthalamic nucleus (STN-DBS) on gait, falls and Freezing of Gait (FOG) in patients with Parkinson’s disease"
+X04 = "Modulation of cortical networks for predictive motor control by the subthalamic nucleus: from functional imaging to deep brain stimulation and recording"
+
+Z01 = "Central Office"
+Z02 = "Animal Motor Circuits Core Facility"
+Z03 = "Human Motor Assessment Centre"
