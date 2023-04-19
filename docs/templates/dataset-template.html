@@ -12,7 +12,6 @@
         </b-card-sub-title>
         <!-- DATASET VERSION ETC -->
         <b-card-text>
-          <strong>Version:</strong> {{selectedDataset.dataset_version.substring(0,7)}}&nbsp;
           <strong>Last updated:</strong> {{displayData.last_updated}}&nbsp;
           <strong>DOI:</strong> <span v-if="selectedDataset.doi"><a :href="selectedDataset.doi" target="_blank"> {{selectedDataset.doi.replace("https://doi.org/", "")}}</a></span>
           <span v-else><em>unknown</em></span>&nbsp;
@@ -225,7 +224,6 @@
                         </span>
                         <b-card-text>
                           <small>
-                            <strong>Version:</strong> {{ds.dataset_version.substring(0,7)}}&nbsp;
                             <strong>Modified:</strong> {{getDateFromUTCseconds(ds.source_time)}}&nbsp;
                           </small>
                         </b-card-text>
