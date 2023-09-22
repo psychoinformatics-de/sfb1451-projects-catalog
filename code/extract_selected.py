@@ -4,7 +4,9 @@ from pathlib import Path
 from uuid import UUID
 
 from datalad.api import (
-    catalog,
+    catalog_add,
+    catalog_set,
+    catalog_translate,
     meta_extract,
 )
 
@@ -88,7 +90,7 @@ translated_name = f"{extracted_path.stem}.cat.jsonl"
 translated_path = extracted_path.parent.joinpath(translated_name)
 
 with translated_path.open("w") as json_file:
-    for res in catalog("translate", metadata=extracted_path, return_type="generator"):
+    for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
         assert res["status"] == "ok"  # crude check
         metadata_item = postprocess(res)
         json.dump(metadata_item, json_file)
@@ -98,10 +100,17 @@ with translated_path.open("w") as json_file:
 if args.add_super is not None:
     with translated_path.open() as json_file:
         first = json.loads(json_file.readline())
-    catalog("add", catalog_dir=args.add_super, metadata=translated_path)
-    catalog(
-        "set-super",
-        catalog_dir=args.add_super,
+
+    catalog_add(
+        catalog=args.add_super,
+        metadata=translated_path,
+        config_file=args.add_super / "config.json",
+    )
+
+    catalog_set(
+        catalog=args.add_super,
+        property="home",
         dataset_id=first["dataset_id"],
         dataset_version=first["dataset_version"],
+        reckless="overwrite",
     )
