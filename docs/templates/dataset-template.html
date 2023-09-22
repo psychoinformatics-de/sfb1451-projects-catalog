@@ -12,6 +12,7 @@
         </b-card-sub-title>
         <!-- DATASET VERSION ETC -->
         <b-card-text>
+          <strong>Version:</strong> {{selectedDataset.dataset_version.substring(0,7)}}&nbsp;
           <strong>Last updated:</strong> {{displayData.last_updated}}&nbsp;
           <strong>DOI:</strong> <span v-if="selectedDataset.doi"><a :href="selectedDataset.doi" target="_blank"> {{selectedDataset.doi.replace("https://doi.org/", "")}}</a></span>
           <span v-else><em>unknown</em></span>&nbsp;
@@ -129,7 +130,7 @@
               <b-button pill disabled size="sm" variant="outline-dark" v-for="keyword in selectedDataset.keywords">{{keyword}}</b-button>
             </b-card-text>
 
-            <b-card-text>
+            <b-card-text v-if="selectedDataset.subdatasets_available_count || selectedDataset.top_display">
               <strong>Properties:</strong> <br>
               <span v-if="selectedDataset.subdatasets_available_count"><b-button disabled size="sm" variant="outline-dark">Subdatasets: {{selectedDataset.subdatasets_available_count}}</b-button>&nbsp;</span>
               <span v-if="selectedDataset.top_display && selectedDataset.top_display.length">
@@ -141,7 +142,7 @@
       </b-card-body>
       <!-- BOTTOM SECTION WITH TABS-->
       <b-card-body>
-        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex" @activate-tab="newTabActivated" ref="alltabs" v-show="subdatasets_ready && files_ready" @changed="tabsChanged">
+        <b-tabs card content-class="mt-3" fill active-nav-item-class="font-weight-bold" v-model="tabIndex" @activate-tab="newTabActivated" ref="alltabs">
           <!-- SUBDATASETS -->
           <b-tab key="subdatasets" ref="tabelement">
             <template v-slot:title>
@@ -224,6 +225,7 @@
                         </span>
                         <b-card-text>
                           <small>
+                            <strong>Version:</strong> {{ds.dataset_version.substring(0,7)}}&nbsp;
                             <strong>Modified:</strong> {{getDateFromUTCseconds(ds.source_time)}}&nbsp;
                           </small>
                         </b-card-text>
@@ -298,7 +300,7 @@
                         <small>
                           Published: {{pub.datePublished}} <br>
                           DOI: <span v-if="pub.doi"><a :href="pub.doi" target="_blank">{{pub.doi.replace("https://doi.org/", "")}}</a></span> <br>
-                          Journal: {{pub.publicationOutlet}}
+                          <span v-if="pub.publicationOutlet">Journal: {{pub.publicationOutlet}}</span>
                         </small>
                       </b-col>
                     </b-row>
@@ -322,8 +324,9 @@
                         <span class="xxlfont"><i class="fas fa-dollar-sign "></i></span>
                       </b-col>
                       <b-col class="text-muted" md="11">
-                        <h5><span v-if="fund.name">{{fund.name}}</span><span v-else><em>(fund name missing)</em></span></h5>
-                        <small><strong>Grant identifier:</strong> {{fund["identifier"]}}<br><strong>Description:</strong> {{fund["description"]}}</small><br>
+                        <h5><span v-if="fund.name">{{fund.name}}</span><span v-else><em>(fund name not specified)</em></span></h5>
+                        <span v-if="fund['identifier']"><small><strong>Grant identifier:</strong> {{fund["identifier"]}}</small><br></span>
+                        <span v-if="fund['description']"><small><strong>Description:</strong> {{fund["description"]}}</small><br></span>
                       </b-col>
                       </b-col>
                     </b-row>
@@ -462,7 +465,18 @@
                     <tbody>
                       <tr v-for="content_key in Object.keys(new_tab.content)">
                          <td><strong>{{ content_key.charAt(0).toUpperCase() + content_key.slice(1) }}</strong></td> 
-                         <td>{{ new_tab.content[content_key] }}</td>  
+                         <td>
+                          <span v-if="!new_tab.content[content_key]"><em>not specified</em></span>
+                          <span v-else-if="Array.isArray(new_tab.content[content_key])">
+                            <span v-for="val in new_tab.content[content_key]">{{val}}<br></span>
+                          </span>
+                          <span v-else-if="typeof new_tab.content[content_key] === 'object'">
+                            <span v-for="k in Object.keys(new_tab.content[content_key])">
+                              <em>{{k}}:</em> {{new_tab.content[content_key][k]}} <br>
+                            </span>
+                          </span>
+                          <span v-else>{{ new_tab.content[content_key] }}</span>
+                         </td>
                       </tr>
                      </tbody>
                   </table>

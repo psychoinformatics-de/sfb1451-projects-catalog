@@ -214,8 +214,11 @@ const datasetView = () =>
                 c.dirs_from_path[c.dirs_from_path.length - 1]
                   .toLowerCase()
                   .indexOf(this.search_text.toLowerCase()) >= 0 ||
-                c.authors.some((f) =>f.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 ) ||
-                c.authors.some((f) =>f.familyName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 )
+                // || (c.authors.some(e => e.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0))
+                c.authors.some(
+                  (f) =>
+                    f.name.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0
+                )
               );
             });
           },
@@ -479,11 +482,6 @@ const datasetView = () =>
             }
           },
           tabsChanged(currentTabs, previousTabs) {
-            console.log("TABS-CHANGED-EVENT")
-            console.log('current')
-            console.log(currentTabs)
-            console.log('previous')
-            console.log(previousTabs)
             this.setCorrectTab(
               this.$root.selectedDataset.has_subdatasets,
               this.$root.selectedDataset.has_files
@@ -505,10 +503,8 @@ const datasetView = () =>
                 }
                 else {
                   if (tabs.length > 2) {
-                    console.log('setting tabIndex = 2 (no datasets or files, has extra tabs)')
                     this.tabIndex = 2;
                   } else {
-                    console.log('setting tabIndex = 0 (no datasets or files or extra tabs)')
                     this.tabIndex = 0;
                   }
                 }
@@ -518,19 +514,13 @@ const datasetView = () =>
               selectTab = tabs.indexOf(tab_param)
               if (selectTab >= 0) {
                 this.tabIndex = selectTab;
-                console.log('setting tabIndex = ' + selectTab + ' based on URLparam')
               } else {
                 this.tabIndex = 0;
               }
             }
           }
-
         },
         async beforeRouteUpdate(to, from, next) {
-          var has_subdatasets, has_files
-          console.log('\n---BEFORE ROUTE UPDATE---\n')
-          console.log(to.params.tab_name)
-          console.log('\n---BEFORE ROUTE UPDATE---\n')
           this.tabIndex = 0;
           this.subdatasets_ready = false;
           this.dataset_ready = false;
@@ -647,10 +637,6 @@ const datasetView = () =>
           next();
         },
         async created() {
-          var has_subdatasets, has_files
-          console.log('\n---CREATED---\n')
-          console.log(this.$route.params.tab_name)
-          console.log('\n---CREATED---\n')
           file = getFilePath(
             this.$route.params.dataset_id,
             this.$route.params.dataset_version,
