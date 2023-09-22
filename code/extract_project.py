@@ -12,7 +12,7 @@ from pathlib import Path
 from uuid import UUID
 
 from datalad.api import(
-    catalog,
+    catalog_translate,
     meta_conduct,
 )
 
@@ -53,7 +53,8 @@ translated_name = f"{extracted_path.stem}.cat.jsonl"
 translated_path = args.outdir.joinpath(translated_name)
 
 with translated_path.open("w") as json_file:
-    for res in catalog("translate", metadata=extracted_path, return_type="generator"):
+    for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
+        print(res)
         assert res["status"] == "ok"  # crude check
         json.dump(res["translated_metadata"], json_file)
         json_file.write("\n")
