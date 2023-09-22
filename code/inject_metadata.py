@@ -10,10 +10,9 @@ from datetime import datetime
 import json
 from pathlib import Path
 import subprocess
-import tempfile
 import tomli
 
-from datalad.api import Dataset, catalog
+from datalad.api import Dataset, catalog_add
 
 
 def get_gitconfig(conf_name):
@@ -99,7 +98,8 @@ if args.keywords:
     if keywords is not None:
         meta_item["keywords"] = keywords
 
-with tempfile.NamedTemporaryFile(mode="w+t") as f:
-    json.dump(meta_item, f)
-    f.seek(0)
-    res = catalog("add", catalog_dir=catalog_dir, metadata=f.name)
+res = catalog_add(
+    catalog=catalog_dir,
+    metadata=json.dumps(meta_item),
+    config_file=catalog_dir / "config.json",
+)
