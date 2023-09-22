@@ -13,10 +13,10 @@ The following DataLad extensions are required to generate the catalog:
 [[https://github.com/mslw/datalad-wackyextra][DataLad-wackyextra]] provides custom metadata extractors and translators,
 [[https://github.com/datalad/datalad-catalog][DataLad-catalog]] is used to generate the catalog.
 
-* Generation
-Project datasets are tracked in the =Projects= superdataset.
+* Dataset locations
+Project datasets are tracked in the =Projects= superdataset. GitHub mirror: https://github.com/sfb1451/all-projects
 
-** To obtain a subdataset:
+** Obtaining a subdataset from Sciebo:
 #+begin_src bash
   datalad clone -d . webdavs://<base URL>/Projects/<Project>/<subfolder> <Project>
 #+end_src
@@ -27,48 +27,29 @@ Tip: until [[https://github.com/datalad/datalad-next/issues/108][datalad-next/is
   git annex initremote my-sciebo-storage --private --sameas <name or uuid> exporttree=yes type=webdav url="<url>"
 #+end_src
 
-** Extract, translate, and add metadata
-Extraction:
-#+begin_src bash
-  datalad meta-extract -d Projects metalad_core >! extracted.jsonl
-  datalad meta-extract -d Projects metalad_studyminimeta >> extracted.jsonl
-  datalad meta-extract -d Projects/XYZ we_cff >> extracted.jsonl
-  datalad meta-extract -d Projects/XYZ we_ris >> extracted.jsonl
-  datalad meta-extract -d Projects/XYZ we_nbib >> extracted.jsonl
-#+end_src
-Translation:
-#+begin_src bash
-  datalad wacky-translate -i extracted.jsonl -o translated.jsonl
-#+end_src
-Addition:
-#+begin_src bash
-  datalad catalog add -c catalog/docs -m translated.jsonl
-  datalad catalog set-super -c catalog/docs -i <id> -v <version>
-#+end_src
-
-* Generation - advanced
-
-** Use meta-conduct for several extractors
-
-Attached =project_extract_pipeline.json= bundles `we_cff`, `we_ris`, and `we_nbib` extractors:
+or with clone url substitution - check:
 
 #+begin_src bash
-  datalad -f json meta-conduct catalog/project_extract_pipeline.json \
-	  traverser.top_level_dir=Projects/XYZ | \
-      jq -c '.pipeline_data.result.metadata | .[].metadata_record' >> extracted.jsonl
+  datalad configuration  | grep 'datalad.clone.url-substitute'
 #+end_src
 
-** Extract from a single subdataset under a project
+to get some examples how you can alter all such URLs at once.
 
-When running extractors, run those for user-provided metadata first, and metalad_core last.
-This way, user-provided authorship information will take precedence (due to current configuration).
-The metalad_core extractor will contain subdataset url if the subdataset was installed from that url.
+* Generation
 
-#+begin_src bash
-  # metalad core for project dataset
-  datalad meta-extract -d Projects/XYZ metalad_core >> extracted.jsonl
-  # user-provided metadata (e.g. authors)
-  datalad meta-extract -d Projects/XYZ/subds datacite_gin >> extracted.jsonl
-  # metalad core for subdataset (dataset url)
-  datalad meta-extract -d Projects/XYZ/subds metalad_core >> extracted.jsonl
-#+end_src
+Utility scripts are provided in the code directory. These are:
+
+- =extract_project.py=: extract metadata from a project's superdataset.
+  Conducts project_extract_pipeline.json and translates the result.
+  This includes metalad_core, CFF, and bibliography (ris/nbib/crossref) extractors.
+  Extracted and translated metadata are written to the specified directory
+  as two separate files (project.jsonl, project.cat.jsonl).
+- =extract_file.py=: similar to the above, but creates file listing (file metadata)
+- =extract_selected.py=: this one targets both project's subdatasets and the sfb superdataset.
+  It allows selection of extractors to be used.
+  For sfb superdataset, metadata can be added to the catalog and its home page updated.
+  Otherwise, metadata will be written to a file.
+- =inject_metadata=: this covers addition of metadata declared in this repo (see =manually_entered.toml=),
+  such as keywords or funding, and not present in the datasets.
+
+See command line help or source code for usage instructions.
