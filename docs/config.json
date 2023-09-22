@@ -15,16 +15,23 @@
   "property_sources": {
     "dataset": {
       "dataset_id": {
-        "rule": "single",
-        "source": "metalad_core"
+          "rule": "single",
+	  "source": "any"
       },
       "dataset_version": {
         "rule": "single",
-        "source": "metalad_core"
+        "source": [
+	  "metalad_core",
+	  "tabby"
+	]
+
       },
       "type": {
         "rule": "single",
-        "source": "metalad_core"
+        "source": [
+	  "metalad_core",
+	  "tabby"
+	]
       },
       "children": {
         "rule": "merge",
@@ -35,6 +42,7 @@
         "source": [
           "we_cff",
           "datacite_gin",
+	  "tabby",  
           "metalad_studyminimeta",
           "bids_dataset"
         ]
@@ -46,6 +54,7 @@
         "source": [
           "we_cff",
           "datacite_gin",
+	  "tabby",  
           "metalad_studyminimeta",
           "catalog_readme",
           "bids_dataset"
@@ -64,7 +73,8 @@
           "datacite_gin",
           "metalad_studyminimeta",
           "bids_dataset",
-          "metalad_core"
+          "metalad_core",
+	  "tabby"
         ]
       },
       "keywords": {
