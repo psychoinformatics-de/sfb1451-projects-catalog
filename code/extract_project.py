@@ -12,6 +12,7 @@ from pathlib import Path
 from uuid import UUID
 
 from datalad.api import(
+    catalog_add,
     catalog_translate,
     meta_conduct,
 )
@@ -27,6 +28,7 @@ class MyEncoder(json.JSONEncoder):
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
+parser.add_argument("-c", "--catalog", type=Path, help="Catalog to add metadata to")
 args = parser.parse_args()
 
 # extraction
@@ -59,3 +61,10 @@ with translated_path.open("w") as json_file:
         json.dump(res["translated_metadata"], json_file)
         json_file.write("\n")
 
+# optional addition
+if args.catalog is not None:
+    catalog_add(
+        catalog=args.catalog,
+        metadata=translated_path,
+        config_file=args.catalog / "config.json",
+    )
