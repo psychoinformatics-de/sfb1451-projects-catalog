@@ -13,13 +13,13 @@ A01 = [
     ]
 
 A02 = [
-    "autophagy-endolysosomal",
-    "voluntary motor control",
+    "ataxia",
     "cerebellum",
-    "basal ganglia",
-    "mouse model",
+    "endocytosis",
+    "GRID2",
+    "3D Reconstruction",
+    "synapse",
     "AP-2",
-    "ATG5",
     ]
 
 A03 = [
