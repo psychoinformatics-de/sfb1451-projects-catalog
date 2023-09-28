@@ -6,8 +6,18 @@ import subprocess
 
 from datalad_next.datasets import Dataset
 
-def check_filename(ds_path, fname):
 
+def check_filename(ds_path, fname):
+    """Report file size and relative path
+
+    First checks the size with stat(). If that fails (presumably
+    meaning a broken symlink, i.e. annexed file with content not
+    available locally) uses git annex info on that file.
+
+    Returns a dictionary with "path" and "contentbytesize" keys
+    matching catalog schema.
+
+    """
     if fname == "":
         return None
 
@@ -18,7 +28,7 @@ def check_filename(ds_path, fname):
     except FileNotFoundError:
         res = subprocess.run(
             ["git", "annex", "--json", "info", "--fast", "--bytes", fname],
-            cwd = ds_path,
+            cwd=ds_path,
             capture_output=True,
             text=True,
         )
@@ -27,14 +37,29 @@ def check_filename(ds_path, fname):
             return {"path": fname, "contentbytesize": int(out["size"])}
 
 
+def iter_tree(ds_path, n_threads=8):
+    """Run git ls-tree; report file size and relative path"""
+    res = subprocess.run(
+        ["git", "ls-tree", "HEAD", "-r", "--name-only"],
+        cwd=ds_path,
+        capture_output=True,
+        text=True,
+    )
+    file_names = res.stdout.split("\n")
+    files_to_check = [(ds_path, fname) for fname in file_names if fname != ""]
+
+    results = ThreadPool(n_threads).starmap(check_filename, files_to_check)
+
+    return results
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset for which files will be listed")
 parser.add_argument("outfile", type=Path, help="Json lines file for storing metadata")
 args = parser.parse_args()
 
-
+# create basic metadata item with dataset id and version
 ds = Dataset(args.dataset)
-
 file_required_meta = {
     "type": "file",
     "dataset_id": ds.id,
@@ -42,24 +67,8 @@ file_required_meta = {
     # "metadata_sources": None,
 }
 
-# list files with git ls-tree
-
-res = subprocess.run(["git", "ls-tree", "HEAD", "-r", "--name-only"],
-                     cwd = args.dataset,
-                     capture_output=True,
-                     text=True,
-                     )
-
-file_names = res.stdout.split("\n")
-print(file_names)
-files_to_check = [(args.dataset, fname) for fname in file_names]
-
-# get file sizes
-
-results = ThreadPool(8).starmap(check_filename, files_to_check)
-
-# save outputs
-
+# list files and save metadata
+results = iter_tree(args.dataset)
 with args.outfile.open("w") as json_file:
     for result in results:
         if result is not None:
