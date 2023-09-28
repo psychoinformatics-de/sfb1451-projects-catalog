@@ -1,9 +1,10 @@
-from pathlib import Path
+import argparse
 import json
+from multiprocessing.pool import ThreadPool
+from pathlib import Path
 import subprocess
 
-from multiprocessing.pool import ThreadPool
-
+from datalad_next.datasets import Dataset
 
 def check_filename(ds_path, fname):
 
@@ -26,33 +27,41 @@ def check_filename(ds_path, fname):
             return {"path": fname, "contentbytesize": int(out["size"])}
 
 
-ds_path = Path("/tmp/my-dataset")
+parser = argparse.ArgumentParser()
+parser.add_argument("dataset", type=Path, help="Dataset for which files will be listed")
+parser.add_argument("outfile", type=Path, help="Json lines file for storing metadata")
+args = parser.parse_args()
 
+
+ds = Dataset(args.dataset)
 
 file_required_meta = {
     "type": "file",
-    "dataset_id": None,
-    "dataset_version": None,
+    "dataset_id": ds.id,
+    "dataset_version": ds.repo.get_hexsha(),
     # "metadata_sources": None,
 }
 
+# list files with git ls-tree
 
 res = subprocess.run(["git", "ls-tree", "HEAD", "-r", "--name-only"],
-                     cwd = ds_path,
+                     cwd = args.dataset,
                      capture_output=True,
                      text=True,
                      )
 
 file_names = res.stdout.split("\n")
-files_to_check = [(ds_path, fname) for fname in file_names]
+print(file_names)
+files_to_check = [(args.dataset, fname) for fname in file_names]
+
+# get file sizes
 
 results = ThreadPool(8).starmap(check_filename, files_to_check)
 
-# non-parallel version
-# results = [check_filename(f, ds_path) for f in file_names]
+# save outputs
 
-for i, result in enumerate(results):
-    # todo: json.dump()
-    print(file_required_meta | result)
-    if i == 10:
-        break
+with args.outfile.open("w") as json_file:
+    for result in results:
+        if result is not None:
+            json.dump(file_required_meta | result, json_file)
+            json_file.write("\n")
