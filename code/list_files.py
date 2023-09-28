@@ -40,12 +40,12 @@ def check_filename(ds_path, fname):
 def iter_tree(ds_path, n_threads=8):
     """Run git ls-tree; report file size and relative path"""
     res = subprocess.run(
-        ["git", "ls-tree", "HEAD", "-r", "--name-only"],
+        ["git", "ls-tree", "HEAD", "-r", "-z", "--name-only"],
         cwd=ds_path,
         capture_output=True,
         text=True,
     )
-    file_names = res.stdout.split("\n")
+    file_names = res.stdout.split("\x00")
     files_to_check = [(ds_path, fname) for fname in file_names if fname != ""]
 
     results = ThreadPool(n_threads).starmap(check_filename, files_to_check)
