@@ -6,6 +6,12 @@ Website: https://psychoinformatics-de.github.io/sfb1451-projects-catalog
 The catalog is placed in the =docs= directory (to allow other repository content at root level),
 and served to GitHub pages from there.
 
+* Related repositories:
+
+- SFB superdataset: [[https://github.com/sfb1451/all-projects][sfb1451/all-projects]]
+- Utilities for handling tabby files: [[https://github.com/sfb1451/tabby-utils][sfb1451/tabby-utils]]
+- Custom extractors & translators: [[https://github.com/mslw/datalad-wackyextra][mslw/datalad-wackyextra]]
+
 * Required extensions
 The following DataLad extensions are required to generate the catalog:
 [[https://github.com/datalad/datalad-next][DataLad-next]] is used to interact with WebDAV remotes,
@@ -45,6 +51,7 @@ Utility scripts are provided in the code directory. These are:
   Extracted and translated metadata are written to the specified directory
   as two separate files (project.jsonl, project.cat.jsonl).
 - =extract_file.py=: similar to the above, but creates file listing (file metadata)
+- =list_files.py=: replacement for =extract_file= based on basic git, git-annex, and stat calls
 - =extract_selected.py=: this one targets both project's subdatasets and the sfb superdataset.
   It allows selection of extractors to be used.
   For sfb superdataset, metadata can be added to the catalog and its home page updated.
