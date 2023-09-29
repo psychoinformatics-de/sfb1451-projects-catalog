@@ -10,9 +10,8 @@ from datalad_next.datasets import Dataset
 def check_filename(ds_path, fname):
     """Report file size and relative path
 
-    First checks the size with stat(). If that fails (presumably
-    meaning a broken symlink, i.e. annexed file with content not
-    available locally) uses git annex info on that file.
+    First asks git-annex about the file info. If git-annex knows
+    nothing, uses stat().
 
     Returns a dictionary with "path" and "contentbytesize" keys
     matching catalog schema.
@@ -21,20 +20,22 @@ def check_filename(ds_path, fname):
     if fname == "":
         return None
 
-    fp = ds_path / Path(fname)
-    try:
-        stat = fp.stat()
-        return {"path": fname, "contentbytesize": stat.st_size}
-    except FileNotFoundError:
-        res = subprocess.run(
-            ["git", "annex", "--json", "info", "--fast", "--bytes", fname],
-            cwd=ds_path,
-            capture_output=True,
-            text=True,
-        )
-        out = json.loads(res.stdout)
-        if out["success"]:
-            return {"path": fname, "contentbytesize": int(out["size"])}
+    res = subprocess.run(
+        ["git", "annex", "--json", "info", "--fast", "--bytes", fname],
+        cwd=ds_path,
+        capture_output=True,
+        text=True,
+    )
+
+    out = json.loads(res.stdout)
+    if out["success"]:
+        return {"path": fname, "contentbytesize": int(out["size"])}
+    else:
+        try:
+            stat = ds_path.joinpath(fname).stat()
+            return {"path": fname, "contentbytesize": stat.st_size}
+        except FileNotFoundError:
+            return None
 
 
 def iter_tree(ds_path, n_threads=8):
