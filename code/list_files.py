@@ -29,6 +29,8 @@ def check_filename(ds_path, fname):
 
     out = json.loads(res.stdout)
     if out["success"]:
+        if out["file"] is None:
+            return None  # we got annex info for submodule
         return {"path": fname, "contentbytesize": int(out["size"])}
     else:
         try:
