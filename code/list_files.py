@@ -4,7 +4,8 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 import subprocess
 
-from datalad_next.datasets import Dataset
+from datalad_next.datasets import Dataset, LeanAnnexRepo, LegacyAnnexRepo
+from datalad_next.iter_collections.gitworktree import iter_gitworktree, GitTreeItemType
 
 
 def check_filename(ds_path, fname):
@@ -71,7 +72,15 @@ file_required_meta = {
 }
 
 # list files and save metadata
-results = iter_tree(args.dataset)
+if isinstance(ds.repo, (LeanAnnexRepo, LegacyAnnexRepo)):
+    results = iter_tree(args.dataset)
+else:
+    results = [
+        {"path": str(x.name), "contentbytesize": x.size}
+        for x in iter_gitworktree(args.dataset, fp=True)
+        if x.gittype == GitTreeItemType.file
+    ]
+
 with args.outfile.open("w") as json_file:
     for result in results:
         if result is not None:
