@@ -38,6 +38,7 @@ const datasetView = () =>
             citation_busy: false,
             citation_text: "",
             invalid_doi: false,
+            show_backbutton: false,
           };
         },
         watch: {
@@ -91,7 +92,7 @@ const datasetView = () =>
                   disp_dataset["short_name"] = dataset["short_name"];
                 }
               }
-              disp_dataset["display_name"] = " - " + disp_dataset["short_name"];
+              disp_dataset["display_name"] = disp_dataset["short_name"];
               // DOI
               if (!dataset.hasOwnProperty("doi") || !dataset["doi"]) {
                 disp_dataset["doi"] = "not available";
@@ -108,9 +109,12 @@ const datasetView = () =>
               sorted_metadata_sources = dataset.metadata_sources.sources.sort(
                 (a, b) => b.source_time - a.source_time
               );
-              disp_dataset.last_updated = this.getDateFromUTCseconds(
-                sorted_metadata_sources[0].source_time
-              );
+              disp_dataset.last_updated = sorted_metadata_sources[0].source_time
+              if (disp_dataset.last_updated) {
+                disp_dataset.last_updated = this.getDateFromUTCseconds(
+                  disp_dataset.last_updated
+                );
+              }
               // ID, version and location
               disp_dataset.file_path =
                 "metadata/" +
@@ -214,10 +218,17 @@ const datasetView = () =>
                 c.dirs_from_path[c.dirs_from_path.length - 1]
                   .toLowerCase()
                   .indexOf(this.search_text.toLowerCase()) >= 0 ||
-                // || (c.authors.some(e => e.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0))
                 c.authors.some(
                   (f) =>
-                    f.name.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0
+                  f.givenName && f.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 
+                ) ||
+                c.authors.some(
+                  (f) =>
+                  f.familyName && f.familyName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 
+                ) ||
+                c.authors.some(
+                  (f) =>
+                  f.name && f.name.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0
                 )
               );
             });
@@ -322,6 +333,9 @@ const datasetView = () =>
                   dataset_version: objVersion,
                 },
               }
+              // before navigation, clear filtering options
+              this.clearFilters()
+              // now navigate
               if (newBrowserTab) {
                 const routeData = router.resolve(route_info);
                 window.open(routeData.href, '_blank');
@@ -333,6 +347,11 @@ const datasetView = () =>
               console.log(this.$root.subNotAvailable);
               this.$root.$emit("bv::show::modal", "modal-3", "#btnShow");
             }
+          },
+          clearFilters() {
+            this.search_text = ""
+            this.search_tags = []
+            this.clearSearchTagText()
           },
           selectDescription(desc) {
             if (desc.content.startsWith("path:")) {
@@ -380,7 +399,7 @@ const datasetView = () =>
           },
           openWithBinder(dataset_url) {
             const environment_url =
-              "https://mybinder.org/v2/gh/datalad/datalad-binder/parameter-test";
+              "https://mybinder.org/v2/gh/datalad/datalad-binder/main";
             const content_url = "https://github.com/jsheunis/datalad-notebooks";
             const content_repo_name = "datalad-notebooks";
             const notebook_name = "download_data_with_datalad_python.ipynb";
@@ -481,35 +500,16 @@ const datasetView = () =>
               }
             }
           },
-          tabsChanged(currentTabs, previousTabs) {
-            this.setCorrectTab(
-              this.$root.selectedDataset.has_subdatasets,
-              this.$root.selectedDataset.has_files
-            )
-          },
-          setCorrectTab(has_subdatasets, has_files) {
-            // now set the correct tab:
-            var tabs = this.$refs['alltabs'].$children.filter(
-              child => typeof child.$vnode.key === 'string' || child.$vnode.key instanceof String
-            ).map(child => child.$vnode.key)
-            var tab_param = this.$route.params.tab_name;
+          setCorrectTab(tab_param) {
+            // the set of available tabs have been updated in component
+            // data in either created() or beforeRouteUpdate()
+            var tabs = this.$root.selectedDataset.available_tabs.map(v => v.toLowerCase());
+            // If no tab parameter is supplied via the router, set to first tab
             if (!tab_param) {
-              if (has_subdatasets) {
-                this.tabIndex = 0;
-              }
-              else {
-                if (has_files) {
-                  this.tabIndex = 1;
-                }
-                else {
-                  if (tabs.length > 2) {
-                    this.tabIndex = 2;
-                  } else {
-                    this.tabIndex = 0;
-                  }
-                }
-              }
+              this.tabIndex = 0
             }
+            // If a tab parameter is supplied via the router, navigate to that tab if
+            // part of available tabs, otherwise first tab
             else {
               selectTab = tabs.indexOf(tab_param)
               if (selectTab >= 0) {
@@ -629,14 +629,50 @@ const datasetView = () =>
           else {
             this.$root.selectedDataset.has_files = false;
           }
-          // // now set the correct tab:
-          // this.setCorrectTab(
-          //   this.$root.selectedDataset.has_subdatasets,
-          //   this.$root.selectedDataset.has_files
-          // )
+          // Now list all tabs and set the correct one
+          // order in DOM: subdatasets, content, publications, funding, provenance,
+          sDs = this.$root.selectedDataset
+          available_tabs = ['subdatasets', 'content']
+          standard_tabs = ['publications', 'funding', 'provenance']
+          // add available standard tabs
+          for (var t=0; t<standard_tabs.length; t++) {
+            if (sDs[standard_tabs[t]] && sDs[standard_tabs[t]].length) {
+              available_tabs.push(standard_tabs[t])
+            }
+          }
+          // add available additional_display tabs
+          if (sDs.additional_display && sDs.additional_display.length) {
+            for (var t=0; t<sDs.additional_display.length; t++) {
+              available_tabs.push(sDs.additional_display[t].name)
+            }
+          }
+          // finally set the root data and then set the correct tab
+          this.$root.selectedDataset.available_tabs = available_tabs
+          this.setCorrectTab(
+            to.params.tab_name,
+          )
+          // if navigated to using vue router (i.e. internal to the app), show the back button
+          if ((this.$root.home_dataset_id == this.$root.selectedDataset.dataset_id) && 
+          (this.$root.home_dataset_version == this.$root.selectedDataset.dataset_version)) {
+            this.$root.selectedDataset.show_backbutton = false
+          } else {
+            this.$root.selectedDataset.show_backbutton = true
+          }
           next();
         },
         async created() {
+          // fetch superfile in order to set id and version on $root
+          homefile = metadata_dir + "/super.json";
+          homeresponse = await fetch(homefile);
+          if (homeresponse.status == 404) {
+            this.$root.home_dataset_id = null;
+            this.$root.home_dataset_version = null;
+          } else {
+            hometext = await homeresponse.text();
+            homedataset = JSON.parse(hometext);
+            this.$root.home_dataset_id = homedataset.dataset_id;
+            this.$root.home_dataset_version = homedataset.dataset_version;
+          }
           file = getFilePath(
             this.$route.params.dataset_id,
             this.$route.params.dataset_version,
@@ -717,15 +753,32 @@ const datasetView = () =>
           else {
             this.$root.selectedDataset.has_files = false;
           }
-          // this.setCorrectTab(
-          //   this.$root.selectedDataset.has_subdatasets,
-          //   this.$root.selectedDataset.has_files
-          // )
+          // Now list all tabs and set the correct one
+          // order in DOM: subdatasets, content, publications, funding, provenance,
+          sDs = this.$root.selectedDataset
+          available_tabs = ['subdatasets', 'content']
+          standard_tabs = ['publications', 'funding', 'provenance']
+          // add available standard tabs
+          for (var t=0; t<standard_tabs.length; t++) {
+            if (sDs[standard_tabs[t]] && sDs[standard_tabs[t]].length) {
+              available_tabs.push(standard_tabs[t])
+            }
+          }
+          // add available additional_display tabs
+          if (sDs.additional_display && sDs.additional_display.length) {
+            for (var t=0; t<sDs.additional_display.length; t++) {
+              available_tabs.push(sDs.additional_display[t].name)
+            }
+          }
+          // finally set the root data and then set the correct tab
+          this.$root.selectedDataset.available_tabs = available_tabs
+          this.setCorrectTab(
+            this.$route.params.tab_name,
+          )
         },
         mounted() {
           this.tag_options_filtered = this.tag_options;
           this.tag_options_available = this.tag_options;
-          this.tabIndex = 0;
         }
       }
     })
