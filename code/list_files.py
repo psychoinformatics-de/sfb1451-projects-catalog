@@ -1,60 +1,27 @@
 import argparse
 import json
-from multiprocessing.pool import ThreadPool
-from pathlib import Path
-import subprocess
+from pathlib import Path, PurePath
 
-from datalad_next.datasets import Dataset, LeanAnnexRepo, LegacyAnnexRepo
-from datalad_next.iter_collections.gitworktree import iter_gitworktree, GitTreeItemType
+from datalad_next.datasets import Dataset
 
 
-def check_filename(ds_path, fname):
-    """Report file size and relative path
+def transform_result(res):
+    """Transform status result to catalog schema
 
-    First asks git-annex about the file info. If git-annex knows
-    nothing, uses stat().
-
-    Returns a dictionary with "path" and "contentbytesize" keys
-    matching catalog schema.
+    Keeps only type, path, and contentbytesize; ensures that the path
+    is relative to dataset root.
 
     """
-    if fname == "":
-        return None
-
-    res = subprocess.run(
-        ["git", "annex", "--json", "info", "--fast", "--bytes", fname],
-        cwd=ds_path,
-        capture_output=True,
-        text=True,
-    )
-
-    out = json.loads(res.stdout)
-    if out["success"]:
-        if out["file"] is None:
-            return None  # we got annex info for submodule
-        return {"path": fname, "contentbytesize": int(out["size"])}
-    else:
-        try:
-            stat = ds_path.joinpath(fname).stat()
-            return {"path": fname, "contentbytesize": stat.st_size}
-        except FileNotFoundError:
-            return None
+    return {
+        "type": res["type"],
+        "path": PurePath(res["path"]).relative_to(res["parentds"]).as_posix(),
+        "contentbytesize": res["bytesize"],
+    }
 
 
-def iter_tree(ds_path, n_threads=8):
-    """Run git ls-tree; report file size and relative path"""
-    res = subprocess.run(
-        ["git", "ls-tree", "HEAD", "-r", "-z", "--name-only"],
-        cwd=ds_path,
-        capture_output=True,
-        text=True,
-    )
-    file_names = res.stdout.split("\x00")
-    files_to_check = [(ds_path, fname) for fname in file_names if fname != ""]
-
-    results = ThreadPool(n_threads).starmap(check_filename, files_to_check)
-
-    return results
+def is_file(res):
+    """Check if result type is file"""
+    return res["type"] == "file"
 
 
 parser = argparse.ArgumentParser()
@@ -62,27 +29,21 @@ parser.add_argument("dataset", type=Path, help="Dataset for which files will be 
 parser.add_argument("outfile", type=Path, help="Json lines file for storing metadata")
 args = parser.parse_args()
 
-# create basic metadata item with dataset id and version
+
 ds = Dataset(args.dataset)
 file_required_meta = {
-    "type": "file",
     "dataset_id": ds.id,
     "dataset_version": ds.repo.get_hexsha(),
-    # "metadata_sources": None,
 }
 
-# list files and save metadata
-if isinstance(ds.repo, (LeanAnnexRepo, LegacyAnnexRepo)):
-    results = iter_tree(args.dataset)
-else:
-    results = [
-        {"path": str(x.name), "contentbytesize": x.size}
-        for x in iter_gitworktree(args.dataset, fp=True)
-        if x.gittype == GitTreeItemType.file
-    ]
+results = ds.status(
+    annex="basic",
+    result_renderer="disabled",
+    result_filter=is_file,
+    result_xfm=transform_result,
+)
 
 with args.outfile.open("w") as json_file:
     for result in results:
-        if result is not None:
-            json.dump(file_required_meta | result, json_file)
-            json_file.write("\n")
+        json.dump(file_required_meta | result, json_file)
+        json_file.write("\n")
