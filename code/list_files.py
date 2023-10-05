@@ -3,6 +3,9 @@ import json
 from pathlib import Path, PurePath
 
 from datalad_next.datasets import Dataset
+from datalad_catalog.schema_utils import (
+    get_metadata_item,
+)
 
 
 def transform_result(res):
@@ -31,10 +34,15 @@ args = parser.parse_args()
 
 
 ds = Dataset(args.dataset)
-file_required_meta = {
-    "dataset_id": ds.id,
-    "dataset_version": ds.repo.get_hexsha(),
-}
+
+file_required_meta = get_metadata_item(
+    item_type='file',
+    dataset_id=ds.id,
+    dataset_version=ds.repo.get_hexsha(),
+    source_name="manual_addition",
+    source_version="0.1.0",
+    exclude_keys=["path"],
+)
 
 results = ds.status(
     annex="basic",
