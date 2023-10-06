@@ -13,15 +13,9 @@ import subprocess
 import tomli
 
 from datalad.api import Dataset, catalog_add
-
-
-def get_gitconfig(conf_name):
-    result = (
-        subprocess.run(["git", "config", conf_name], capture_output=True)
-        .stdout.decode()
-        .rstrip()
-    )
-    return result
+from datalad_catalog.schema_utils import (
+    get_metadata_item,
+)
 
 
 def get_ds_info(ds_path):
@@ -29,33 +23,16 @@ def get_ds_info(ds_path):
     return (ds.id, ds.repo.get_hexsha())
 
 
-def get_metadata_source():
-    """Create metadata_sources dict required by catalog schema"""
-    source = {
-        "key_source_map": {},
-        "sources": [
-            {
-                "source_name": "manual_addition",
-                "source_version": "0.1.0",
-                "source_time": datetime.now().timestamp(),
-                "agent_email": get_gitconfig("user.name"),
-                "agent_name": get_gitconfig("user.email"),
-            }
-        ],
-    }
-    return source
-
-
 def new_meta_item(ds_path):
     """Create a minimal valid dataset metadata blob in catalog schema"""
     ds = Dataset(ds_path)
-    meta_item = {
-        "type": "dataset",
-        "dataset_id": ds.id,
-        "dataset_version": ds.repo.get_hexsha(),
-        "name": "",
-        "metadata_sources": get_metadata_source(),
-    }
+    meta_item = get_metadata_item(
+        item_type='dataset',
+        dataset_id=ds.id,
+        dataset_version=ds.repo.get_hexsha(),
+        source_name="manual_addition",
+        source_version="0.1.0",
+    )
     return meta_item
 
 
