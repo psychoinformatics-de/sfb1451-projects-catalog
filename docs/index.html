@@ -6,18 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-    <title>CRC1451 Catalog</title>
-    <meta name="description" content="The CRC1451 data catalog for the Collaborative Research Center (CRC/SFB 1451) investigating key mechanisms of motor control in health and disease"/>
-    <meta property="og:url" content="https://psychoinformatics-de.github.io/sfb1451-projects-catalog"/>
-    <meta property="og:title" content="CRC1451 Catalog"/>
-    <meta property="og:locale" content="en-US"/>
-    <meta property="og:description" content="The CRC1451 data catalog for the Collaborative Research Center (CRC/SFB 1451) investigating key mechanisms of motor control in health and disease"/>
-    <meta property="og:image" content="https://www.crc1451.uni-koeln.de/wp-content/uploads/2022/02/P2110058_CRC1451_Logo.png"/>
-    <meta property="twitter:card" content="summary_large_image"/>
-
     <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+
+    <title>DataLad Catalog</title>
 
     <!-- Required Stylesheets -->
     <link rel="stylesheet" type="text/css" href="assets/style.css"/>
@@ -55,7 +48,8 @@
                   <b-nav-item v-if="social_links['about']" v-b-tooltip.hover title="About" @click="gotoExternal(social_links['about'])"><i class="fas fa-info-circle"></i></b-nav-item>
                   <b-nav-item v-if="social_links['documentation']" v-b-tooltip.hover title="Read documentation" @click="gotoExternal(social_links['documentation'])"><i class="fas fa-file-alt"></i></b-nav-item>
                   <b-nav-item v-if="social_links['github']" v-b-tooltip.hover title="View code base" @click="gotoExternal(social_links['github'])"><i class="fab fa-github"></i></b-nav-item>
-                  <b-nav-item v-if="social_links['twitter']" v-b-tooltip.hover title="Follow on Twitter!" @click="gotoExternal(social_links['twitter'])"><i class="fab fa-twitter"></i></b-nav-item>
+                  <b-nav-item v-if="social_links['mastodon']" v-b-tooltip.hover title="Follow on Mastodon" @click="gotoExternal(social_links['mastodon'])"><i class="fab fa-mastodon"></i></b-nav-item>
+                  <b-nav-item v-if="social_links['x']" v-b-tooltip.hover title="Follow on X (Twitter)" @click="gotoExternal(social_links['x'])"><i class="fab fa-x-twitter"></i></b-nav-item>
                 </b-navbar-nav>
               </b-collapse>
             </b-navbar>
