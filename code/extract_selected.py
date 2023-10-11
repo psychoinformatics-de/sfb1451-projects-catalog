@@ -5,7 +5,6 @@ from uuid import UUID
 
 from datalad.api import (
     catalog_add,
-    catalog_set,
     catalog_translate,
     meta_extract,
 )
@@ -44,28 +43,19 @@ def postprocess(result):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
-# parser.add_argument("output", type=Path, help="Extracted metadata file")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
-parser.add_argument("extractors", metavar="name", nargs="+", help="Extractors to use")
-parser.add_argument(
-    "--add-super",
-    type=Path,
-    metavar="cat",
-    help="Add translated metadata to catalog and update super",
-)
+parser.add_argument("-c", "--catalog", type=Path, help="Catalog to add metadata to")
 parser.add_argument(
     "--filename",
     help="Use this file name instead of deriving from folder names",
 )
+parser.add_argument("extractors", metavar="name", nargs="+", help="Extractors to use")
 
 args = parser.parse_args()
 
 # obtain or generate name for metadata file
 if args.filename is not None:
     extracted_path = args.outdir.joinpath(args.filename)
-elif args.add_super is not None:
-    ds_name = args.dataset.name
-    extracted_path = args.outdir.joinpath(f"{ds_name}.jsonl")
 else:
     # we assume it's a project's subdataset
     ds_name = args.dataset.name
@@ -85,7 +75,7 @@ with extracted_path.open("w") as json_file:
         json.dump(res["metadata_record"], json_file, cls=MyEncoder)
         json_file.write("\n")
 
-# translate
+# translate + postprocess
 translated_name = f"{extracted_path.stem}.cat.jsonl"
 translated_path = extracted_path.parent.joinpath(translated_name)
 
@@ -97,20 +87,9 @@ with translated_path.open("w") as json_file:
         json_file.write("\n")
 
 # update catalog if requested
-if args.add_super is not None:
-    with translated_path.open() as json_file:
-        first = json.loads(json_file.readline())
-
+if args.catalog is not None:
     catalog_add(
-        catalog=args.add_super,
+        catalog=args.catalog,
         metadata=translated_path,
-        config_file=args.add_super / "config.json",
-    )
-
-    catalog_set(
-        catalog=args.add_super,
-        property="home",
-        dataset_id=first["dataset_id"],
-        dataset_version=first["dataset_version"],
-        reckless="overwrite",
+        config_file=args.catalog / "config.json",
     )
