@@ -1,3 +1,8 @@
 # -*- mode: gitignore; -*-
+# standard emacs stuff
 *~
 \#*\#
+# standard python stuff
+code/__pycache__/
+# cache for ontology queries done with tabby-utils
+query_cache.sqlite
