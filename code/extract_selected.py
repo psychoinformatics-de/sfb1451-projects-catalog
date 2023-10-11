@@ -9,13 +9,14 @@ from datalad.api import (
 )
 
 
+from list_files import list_files
 from utils import MyEncoder, postprocess
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
 parser.add_argument("-c", "--catalog", type=Path, help="Catalog to add metadata to")
+parser.add_argument("--files", action="store_true", help="Also list files")
 parser.add_argument(
     "--filename",
     help="Use this file name instead of deriving from folder names",
@@ -50,11 +51,22 @@ with extracted_path.open("w") as json_file:
 translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 with translated_path.open("w") as json_file:
-    for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
+    for res in catalog_translate(
+        metadata=extracted_path, catalog=None, return_type="generator"
+    ):
         assert res["status"] == "ok"  # crude check
         metadata_item = postprocess(res)
         json.dump(metadata_item, json_file)
         json_file.write("\n")
+
+# extract file list if requested
+if args.files:
+    files_stem = f"{extracted_path.stem}_files"
+    files_path = extracted_path.with_stem(files_stem).with_suffix(".cat.jsonl")
+    with files_path.open("w") as json_file:
+        for metadata_item in list_files(args.dataset):
+            json.dump(metadata_item, json_file)
+            json_file.write("\n")
 
 # update catalog if requested
 if args.catalog is not None:
@@ -63,3 +75,10 @@ if args.catalog is not None:
         metadata=translated_path,
         config_file=args.catalog / "config.json",
     )
+
+    if args.files:
+        catalog_add(
+            catalog=args.catalog,
+            metadata=files_path,
+            config_file=args.catalog / "config.json",
+        )
