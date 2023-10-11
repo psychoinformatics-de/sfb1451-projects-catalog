@@ -76,8 +76,7 @@ with extracted_path.open("w") as json_file:
         json_file.write("\n")
 
 # translate + postprocess
-translated_name = f"{extracted_path.stem}.cat.jsonl"
-translated_path = extracted_path.parent.joinpath(translated_name)
+translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 with translated_path.open("w") as json_file:
     for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
