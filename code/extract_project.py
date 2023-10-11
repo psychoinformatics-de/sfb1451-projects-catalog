@@ -21,13 +21,7 @@ from datalad.api import (
 from datalad_catalog.schema_utils import get_metadata_item
 from datalad_next.datasets import Dataset
 
-
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if type(obj) is UUID:
-            return str(obj)
-        return super.default(obj)
-
+from utils import MyEncoder
 
 # allow manual specification
 parser = argparse.ArgumentParser()
