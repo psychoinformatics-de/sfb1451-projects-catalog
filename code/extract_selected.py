@@ -1,71 +1,33 @@
 import argparse
 import json
 from pathlib import Path
-from uuid import UUID
 
 from datalad.api import (
     catalog_add,
-    catalog_set,
     catalog_translate,
     meta_extract,
 )
 
 
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if type(obj) is UUID:
-            return str(obj)
-        return super.default(obj)
-
-
-def postprocess(result):
-    """post-translation tweaks"""
-    md = result["translated_metadata"]
-
-    # try to split studyminimeta funding into name; identifier; description
-    if md["metadata_sources"]["sources"][0]["source_name"] == "metalad_studyminimeta":
-        funding = md["funding"]
-        new_funding = []
-        for fund_source in funding:
-            if len(fund_parts := fund_source["name"].split(";")) == 3:
-                new_funding.append(
-                    {
-                        "name": fund_parts[0].strip(),
-                        "identifier": fund_parts[1].strip(),
-                        "description": fund_parts[2].strip(),
-                    }
-                )
-            else:
-                new_funding.append(fund_source)
-        md["funding"] = new_funding
-
-    return md
-
+from list_files import list_files
+from utils import MyEncoder, postprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
-# parser.add_argument("output", type=Path, help="Extracted metadata file")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
-parser.add_argument("extractors", metavar="name", nargs="+", help="Extractors to use")
-parser.add_argument(
-    "--add-super",
-    type=Path,
-    metavar="cat",
-    help="Add translated metadata to catalog and update super",
-)
+parser.add_argument("-c", "--catalog", type=Path, help="Catalog to add metadata to")
+parser.add_argument("--files", action="store_true", help="Also list files")
 parser.add_argument(
     "--filename",
     help="Use this file name instead of deriving from folder names",
 )
+parser.add_argument("extractors", metavar="name", nargs="+", help="Extractors to use")
 
 args = parser.parse_args()
 
 # obtain or generate name for metadata file
 if args.filename is not None:
     extracted_path = args.outdir.joinpath(args.filename)
-elif args.add_super is not None:
-    ds_name = args.dataset.name
-    extracted_path = args.outdir.joinpath(f"{ds_name}.jsonl")
 else:
     # we assume it's a project's subdataset
     ds_name = args.dataset.name
@@ -85,32 +47,38 @@ with extracted_path.open("w") as json_file:
         json.dump(res["metadata_record"], json_file, cls=MyEncoder)
         json_file.write("\n")
 
-# translate
-translated_name = f"{extracted_path.stem}.cat.jsonl"
-translated_path = extracted_path.parent.joinpath(translated_name)
+# translate + postprocess
+translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 with translated_path.open("w") as json_file:
-    for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
+    for res in catalog_translate(
+        metadata=extracted_path, catalog=None, return_type="generator"
+    ):
         assert res["status"] == "ok"  # crude check
         metadata_item = postprocess(res)
         json.dump(metadata_item, json_file)
         json_file.write("\n")
 
+# extract file list if requested
+if args.files:
+    files_stem = f"{extracted_path.stem}_files"
+    files_path = extracted_path.with_stem(files_stem).with_suffix(".cat.jsonl")
+    with files_path.open("w") as json_file:
+        for metadata_item in list_files(args.dataset):
+            json.dump(metadata_item, json_file)
+            json_file.write("\n")
+
 # update catalog if requested
-if args.add_super is not None:
-    with translated_path.open() as json_file:
-        first = json.loads(json_file.readline())
-
+if args.catalog is not None:
     catalog_add(
-        catalog=args.add_super,
+        catalog=args.catalog,
         metadata=translated_path,
-        config_file=args.add_super / "config.json",
+        config_file=args.catalog / "config.json",
     )
 
-    catalog_set(
-        catalog=args.add_super,
-        property="home",
-        dataset_id=first["dataset_id"],
-        dataset_version=first["dataset_version"],
-        reckless="overwrite",
-    )
+    if args.files:
+        catalog_add(
+            catalog=args.catalog,
+            metadata=files_path,
+            config_file=args.catalog / "config.json",
+        )

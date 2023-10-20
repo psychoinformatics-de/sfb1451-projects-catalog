@@ -9,20 +9,18 @@ directory as two separate files (project.jsonl, project.cat.jsonl).
 import argparse
 import json
 from pathlib import Path
-from uuid import UUID
 
-from datalad.api import(
+import tomli
+
+from datalad.api import (
     catalog_add,
     catalog_translate,
     meta_conduct,
 )
+from datalad_catalog.schema_utils import get_metadata_item
+from datalad_next.datasets import Dataset
 
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if type(obj) is UUID:
-            return str(obj)
-        return super.default(obj)
-
+from utils import MyEncoder
 
 # allow manual specification
 parser = argparse.ArgumentParser()
@@ -55,11 +53,35 @@ translated_name = f"{extracted_path.stem}.cat.jsonl"
 translated_path = args.outdir.joinpath(translated_name)
 
 with translated_path.open("w") as json_file:
-    for res in catalog_translate(metadata=extracted_path, catalog=None, return_type="generator"):
+    for res in catalog_translate(
+        metadata=extracted_path, catalog=None, return_type="generator"
+    ):
         print(res)
         assert res["status"] == "ok"  # crude check
         json.dump(res["translated_metadata"], json_file)
         json_file.write("\n")
+
+# injection
+with open(Path(__file__).parent / "manually_entered.toml", "rb") as f:
+    manually_entered = tomli.load(f)
+
+ds = Dataset(args.dataset)
+handcrafted_item = get_metadata_item(
+    item_type="dataset",
+    dataset_id=ds.id,
+    dataset_version=ds.repo.get_hexsha(),
+    source_name="manual_addition",
+    source_version="0.1.0",
+)
+
+project_name = args.dataset.name  # asume dataset.tld = project name
+if (keywords := manually_entered["keywords"].get(project_name)) is not None:
+    handcrafted_item["keywords"] = keywords
+handcrafted_item["funding"] = manually_entered["funding"].get("sfb1451")
+
+with translated_path.open("a") as json_file:
+    json.dump(handcrafted_item, json_file)
+    json_file.write("\n")
 
 # optional addition
 if args.catalog is not None:

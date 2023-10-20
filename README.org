@@ -43,20 +43,35 @@ to get some examples how you can alter all such URLs at once.
 
 * Generation
 
-Utility scripts are provided in the code directory. These are:
+Generation is done incrementally.  Utility scripts are provided in the
+code directory.  One script usually does one thing.
+
+Scripts have similar CLI: they need to be pointed to a dataset, a
+folder to store intermediate metadata, and (optionally) to a catalog
+they will update. See command line help or source code for usage
+instructions.
+
+Key scripts are:
+
+- =extract_selected.py=: extract metadata from a project's subdataset.
+  It allows selection of extractors to be used.
+  Can optionally generate a file list, too.
 
 - =extract_project.py=: extract metadata from a project's superdataset.
-  Conducts project_extract_pipeline.json and translates the result.
-  This includes metalad_core, CFF, and bibliography (ris/nbib/crossref) extractors.
-  Extracted and translated metadata are written to the specified directory
-  as two separate files (project.jsonl, project.cat.jsonl).
-- =extract_file.py=: similar to the above, but creates file listing (file metadata)
-- =list_files.py=: replacement for =extract_file= based on basic git, git-annex, and stat calls
-- =extract_selected.py=: this one targets both project's subdatasets and the sfb superdataset.
-  It allows selection of extractors to be used.
-  For sfb superdataset, metadata can be added to the catalog and its home page updated.
-  Otherwise, metadata will be written to a file.
-- =inject_metadata=: this covers addition of metadata declared in this repo (see =manually_entered.toml=),
-  such as keywords or funding, and not present in the datasets.
+  Conducts =project_extract_pipeline.json= and translates the result.
+  This pipeline combines metalad_core, CFF, and bibliography (ris/nbib/crossref) extractors.
+  It also adds handcrafted metadata, like funding or keywords.
 
-See command line help or source code for usage instructions.
+- =extract_superdataset=: extract superdataset metadata.
+  Runs =metalad_core= and =metalad_studyminimeta= extractors.
+
+Additional scripts are:
+
+- =utils.py=: shared functions or classes
+
+- =list_files.py=: generate a file listing based on =datalad status=.
+  Deprecated, use =extract_selected.py --files=.
+
+- =scrape_projects.py=: archived script that was used to scrape project descriptions.
+
+- =scrape_publications.py=: archived script that was used to scrape project publications.
