@@ -542,10 +542,10 @@
                                   </template>
                                 </template>
                                 <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
-                                  <a :href="val.preferredOntologyIdentifier">{{val.name}} ({{val?.synonym}})</a>
+                                  <a :href="val.preferredOntologyIdentifier">{{val.name}} ({{val?.synonym}})</a><br>
                                 </template>
                                 <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/UBERONParcellation'">
-                                  <a :href="val.preferredOntologyIdentifier">{{val.name}}</a>
+                                  <a :href="val.preferredOntologyIdentifier">{{val.name}}</a><br>
                                 </template>
                                 <template v-else>
                                   {{val}}
