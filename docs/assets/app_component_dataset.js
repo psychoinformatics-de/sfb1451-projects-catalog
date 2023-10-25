@@ -529,18 +529,6 @@ const datasetView = () =>
               }
             }
           },
-          getDefinitionURL(tab, key, nested_key = null, type = 'keys') {
-            if (nested_key != null) {
-              return this.displayData.additional_tab_defs[tab][type][key][nested_key]
-            } else {
-              var value = this.displayData.additional_tab_defs[tab][type][key]
-              if (typeof value === 'object') {
-                return type == 'keys' ? value.self : value
-              } else {
-                return value
-              }
-            }
-          },
         },
         async beforeRouteUpdate(to, from, next) {
           this.tabIndex = 0;
