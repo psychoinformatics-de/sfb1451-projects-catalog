@@ -499,44 +499,42 @@
                         </td>
                         <!-- PROPERTY VALUE -->
                         <td>
-                          <span>
-                            <template v-for="(val, idx) in Array.isArray(new_tab.content[content_key]) ? new_tab.content[content_key] : Array.of(new_tab.content[content_key])">
-                              <template v-if="typeof val === 'object'">
-                                <template v-if="val?.['@type'] == 'https://schema.org/URL'">
-                                  <a :href="val['@value']"> {{val['@value']}}</a><br>
-                                </template>
-                                <template v-else-if="val?.['@type'] == 'https://schema.org/Person'">
-                                  <template v-if="Object.hasOwn(val, 'email')">
-                                    <a :href="'mailto:' + val.email"> {{val.name}}</a><br>
-                                  </template>
-                                  <template v-else>
-                                    {{val.name}}
-                                  </template>
-                                </template>
-                                <template v-else-if="val?.['@type'] == 'https://schema.org/Thing'">
-                                  <template v-if="Object.hasOwn(val, 'name') && Object.hasOwn(val, 'url')">
-                                    <a :href="val.url">{{val.name}}</a> {{val?.description}}
-                                  </template>
-                                  <template v-else>
-                                    {{val?.name}} {{val?.description}}
-                                  </template>
-                                </template>
-                                <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
-                                  <a :href="val.preferredOntologyIdentifier">{{val.name}} ({{val?.synonym}})</a><br>
-                                </template>
-                                <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/UBERONParcellation'">
-                                  <a :href="val.preferredOntologyIdentifier">{{val.name}}</a><br>
+                          <span v-for="(val, idx) in Array.isArray(new_tab.content[content_key]) ? new_tab.content[content_key] : Array.of(new_tab.content[content_key])">
+                            <template v-if="typeof val === 'object'">
+                              <template v-if="val?.['@type'] == 'https://schema.org/URL'">
+                                <a :href="val['@value']"> {{val['@value']}}</a><br>
+                              </template>
+                              <template v-else-if="val?.['@type'] == 'https://schema.org/Person'">
+                                <template v-if="Object.hasOwn(val, 'email')">
+                                  <a :href="'mailto:' + val.email"> {{val.name}}</a><br>
                                 </template>
                                 <template v-else>
-                                  {{val}}
+                                  {{val.name}}
                                 </template>
                               </template>
-
-                              <template v-else-if="typeof val === 'string' || typeof val === 'number'  | typeof val === 'boolean'">
+                              <template v-else-if="val?.['@type'] == 'https://schema.org/Thing'">
+                                <template v-if="Object.hasOwn(val, 'name') && Object.hasOwn(val, 'url')">
+                                  <a :href="val.url">{{val.name}}</a> {{val?.description}}
+                                </template>
+                                <template v-else>
+                                  {{val?.name}} {{val?.description}}
+                                </template>
+                              </template>
+                              <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
+                                <a :href="val.preferredOntologyIdentifier">{{val.name}} ({{val?.synonym}})</a><br>
+                              </template>
+                              <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/UBERONParcellation'">
+                                <a :href="val.preferredOntologyIdentifier">{{val.name}}</a><br>
+                              </template>
+                              <template v-else>
                                 {{val}}
                               </template>
-
                             </template>
+
+                            <template v-else-if="typeof val === 'string' || typeof val === 'number'  | typeof val === 'boolean'">
+                              {{val}}
+                            </template>
+
                           </span>
 
                         </td>
