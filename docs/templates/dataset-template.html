@@ -511,6 +511,14 @@
                                 {{new_tab.content[content_key][name]}}
                               </template>
                             </template>
+                            <template v-else-if="new_tab.content[content_key]?.['@type'] == 'https://schema.org/Thing'">
+                              <template v-if="Object.hasOwn(new_tab.content[content_key], 'name') && Object.hasOwn(new_tab.content[content_key], 'url')">
+                                <a :href="new_tab.content[content_key]['url']">{{new_tab.content[content_key]['name']}}</a> {{new_tab.content[content_key]?.['description']}}
+                              </template>
+                              <template v-else>
+                                {{new_tab.content[content_key]?.['name']}} {{new_tab.content[content_key]?.['description']}}
+                              </template>
+                            </template>
                             <template v-else-if="new_tab.content[content_key]?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
                               <a :href="new_tab.content[content_key].preferredOntologyIdentifier">{{new_tab.content[content_key].name}} ({{new_tab.content[content_key]?.synonym}})</a>
                             </template>
@@ -539,6 +547,14 @@
                                   </template>
                                   <template v-else>
                                     {{val.name}}
+                                  </template>
+                                </template>
+                                <template v-else-if="val?.['@type'] == 'https://schema.org/Thing'">
+                                  <template v-if="Object.hasOwn(val, 'name') && Object.hasOwn(val, 'url')">
+                                    <a :href="val.url">{{val.name}}</a> {{val?.description}}
+                                  </template>
+                                  <template v-else>
+                                    {{val?.name}} {{val?.description}}
                                   </template>
                                 </template>
                                 <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
