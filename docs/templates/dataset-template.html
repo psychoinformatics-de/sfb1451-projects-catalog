@@ -514,6 +514,10 @@
                             </template>
                           </span>
 
+                          <span v-else-if="typeof new_tab.content[content_key] === 'string' || typeof new_tab.content[content_key] === 'number'  | typeof new_tab.content[content_key] === 'boolean'">
+                            {{new_tab.content[content_key]}}
+                          </span>
+
                           <!-- array (repeat the above in a loop) -->
                           <span v-else-if="Array.isArray(new_tab.content[content_key])">
                             <template v-for="(val, idx) in new_tab.content[content_key]">
@@ -531,6 +535,11 @@
                                   {{val}}
                                 </template>
                               </template>
+
+                              <template v-else-if="typeof val === 'string' || typeof val === 'number'  | typeof val === 'boolean'">
+                                {{val}}
+                              </template>
+
                             </template>
                           </span>
 
