@@ -481,6 +481,7 @@
                       </tr>
                     </thead>
 
+                    <!-- If the tab has @context, treat it as a semantic tab and try to look up each object's @type for custom rendering -->
                     <tbody v-if="new_tab.content?.['@context']">
                       <tr v-for="content_key in Object.keys(new_tab.content).filter((k) => !k.startsWith('@'))">
                         <!-- PROPERTY NAME -->
@@ -499,39 +500,51 @@
                         </td>
                         <!-- PROPERTY VALUE -->
                         <td>
+                          <!-- Always work with an array; if single value given create a one-element array out of it -->
                           <span v-for="(val, idx) in Array.isArray(new_tab.content[content_key]) ? new_tab.content[content_key] : Array.of(new_tab.content[content_key])">
                             <template v-if="typeof val === 'object'">
+                              <!-- URL -->
                               <template v-if="val?.['@type'] == 'https://schema.org/URL'">
                                 <a :href="val['@value']"> {{val['@value']}}</a><br>
                               </template>
+                              <!-- Person -->
                               <template v-else-if="val?.['@type'] == 'https://schema.org/Person'">
                                 <template v-if="Object.hasOwn(val, 'email')">
+                                  <!-- with e-mail -->
                                   <a :href="'mailto:' + val.email"> {{val.name}}</a><br>
                                 </template>
                                 <template v-else>
+                                  <!-- without e-mail -->
                                   {{val.name}}
                                 </template>
                               </template>
+                              <!-- Thing (name, url, description) -->
                               <template v-else-if="val?.['@type'] == 'https://schema.org/Thing'">
                                 <template v-if="Object.hasOwn(val, 'name') && Object.hasOwn(val, 'url')">
+                                  <!-- with url -->
                                   <a :href="val.url">{{val.name}}</a> {{val?.description}}
                                 </template>
                                 <template v-else>
+                                  <!-- without url -->
                                   {{val?.name}} {{val?.description}}
                                 </template>
                               </template>
+                              <!-- OpenMINDS Species -->
                               <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/Species'">
                                 <a :href="val.preferredOntologyIdentifier">{{val.name}} ({{val?.synonym}})</a><br>
                               </template>
+                              <!-- OpenMINDS UBERONParcellation -->
                               <template v-else-if="val?.['@type'] == 'https://openminds.ebrains.eu/controlledTerms/UBERONParcellation'">
                                 <a :href="val.preferredOntologyIdentifier">{{val.name}}</a><br>
                               </template>
+                              <!-- Anything else - type unknown or not declared -->
                               <template v-else>
                                 {{val}}
                               </template>
                             </template>
 
                             <template v-else>
+                              <!-- Primitive value, presumably text or number but we take any -->
                               {{val}}
                             </template>
 
@@ -624,7 +637,8 @@
                           </span>
                          </td>  
                       </tr>
-                     </tbody>
+                    </tbody>
+                    <!-- Standard additional tab rendering with no customizations -->
                      <tbody v-else>
                       <tr v-for="content_key in Object.keys(new_tab.content)">
                          <td><strong>{{ content_key.charAt(0).toUpperCase() + content_key.slice(1) }}</strong></td> 
