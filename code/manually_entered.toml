@@ -322,7 +322,7 @@ Z02 = "Animal Motor Circuits Core Facility"
 Z03 = "Human Motor Assessment Centre"
 
 [funding]
-[funding.sfb1451]
+[[funding.sfb1451]]
 name = "Deutsche Forschungsgemeinschaft (DFG)"
 identifier = "Project number 431549029"
 description = "SFB1451: Key mechanisms of motor control in health and disease"
