@@ -53,7 +53,7 @@ if args.catalog is not None:
     catalog_add(
         catalog=args.catalog,
         metadata=translated_path,
-        config_file=args.add_catalog / "config.json",
+        config_file=args.catalog / "config.json",
     )
 
     catalog_set(
