@@ -1,0 +1,1 @@
+{"type": "directory", "dataset_id": "4d39024b-ce0e-52b6-a40e-9b8e397c8287", "dataset_version": "latest", "children": [{"type": "directory", "name": "NIfTI", "path": "sourcedata/NIfTI", "dataset_id": "4d39024b-ce0e-52b6-a40e-9b8e397c8287", "dataset_version": "latest"}], "path": "sourcedata", "name": "sourcedata"}

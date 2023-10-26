@@ -1,0 +1,1 @@
+{"type": "directory", "dataset_id": "3663a889-0137-598a-9f32-1bc7add3fc48", "dataset_version": "latest", "children": [{"type": "directory", "name": "bids", "path": "MRI/bids", "dataset_id": "3663a889-0137-598a-9f32-1bc7add3fc48", "dataset_version": "latest"}], "path": "MRI", "name": "MRI"}
