@@ -159,10 +159,10 @@
           <!-- FILE TREE -->
           <b-tab @click="getFiles" key="content" ref="tabelement">
             <template v-slot:title>
-              <i class="far fa-folder"></i> Content
+              <i class="far fa-folder"></i> Content <span v-if="!selectedDataset.has_files">(no record)</span>
             </template>
             <span v-if="files_ready">
-              <span v-if="!selectedDataset.tree || !selectedDataset.tree.length"><em>There is no content available for the current dataset</em></span>
+              <span v-if="!selectedDataset.tree || !selectedDataset.tree.length"><em>This catalog record contains no information on dataset content</em></span>
               <span v-else>
                 <b-card no-body class="p-2">
                   <ul>
