@@ -335,7 +335,41 @@
               </template>
               <span v-if="!selectedDataset.funding || !selectedDataset.funding.length"><em>There are no funding sources listed for the current dataset</em></span>
               <span v-else v-for="fund in selectedDataset.funding">
-                <b-card border-variant="dark" header-bg-variant="transparent" no-body class="mb-2">
+
+                <b-card v-if="fund?.['@type']=='schema:Grant'" border-variant="dark" header-bg-variant="transparent" no-body class="mb-2">
+                  <!-- funding is a schema:grant -->
+                  <template v-slot:header>
+                    <b-row no-gutters>
+                      <b-col align-h="center" align-v="center" md="1">
+                        <span class="xxlfont"><i class="fas fa-dollar-sign "></i></span>
+                      </b-col>
+                      <b-col class="text-muted" md="11">
+                        <h5><span v-if="fund.funder">{{fund.funder}}</span><span v-else><em>(funder not specified)</em></span></h5>
+                        <span v-if="fund.name"><small><strong>Grant name:</strong> {{fund.name}}</small><br></span>
+
+                        <template v-if="fund.alternateName && fund?.identifier.startsWith('http')">
+                          <!-- if identifier is an url and alternateName is given, combobulate the two  -->
+                          <span><small><strong>Grant identifier: </strong><a :href="fund.identifier">{{fund.alternateName}}</a></small><br></span>
+                        </template>
+
+                        <template v-else>
+                          <!-- in other case, show available items individually; if identifier is a url, show it as link -->
+                          <span v-if="fund?.identifier.startsWith('http')">
+                            <small><strong>Grant identifier: </strong><a :href="fund.identifier">{{fund.identifier}}</a></small><br>
+                          </span>
+                          <span v-else-if="fund.identifier">
+                            <small><strong>Grant identifier: </strong> {{fund.identifier}}</small><br>
+                          </span>
+                          <span v-if="fund.alternateName"><small><strong>Alternate name: </strong> {{fund.alternateName}}</small><br></span>
+                        </template>
+
+                      </b-col>
+                    </b-row>
+                  </tempate>
+                </b-card>
+
+                <b-card v-else border-variant="dark" header-bg-variant="transparent" no-body class="mb-2">
+                  <!-- funding follows the catalog schema -->
                   <template v-slot:header>
                     <b-row no-gutters>
                       <b-col align-h="center" align-v="center" md="1">
