@@ -336,7 +336,7 @@
               <span v-if="!selectedDataset.funding || !selectedDataset.funding.length"><em>There are no funding sources listed for the current dataset</em></span>
               <span v-else v-for="fund in selectedDataset.funding">
 
-                <b-card v-if="fund?.['@type']=='schema:Grant'" border-variant="dark" header-bg-variant="transparent" no-body class="mb-2">
+                <b-card v-if="fund?.['@type']=='https://schema.org/Grant'" border-variant="dark" header-bg-variant="transparent" no-body class="mb-2">
                   <!-- funding is a schema:grant -->
                   <template v-slot:header>
                     <b-row no-gutters>
