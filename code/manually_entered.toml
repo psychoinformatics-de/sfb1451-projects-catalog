@@ -326,3 +326,7 @@ Z03 = "Human Motor Assessment Centre"
 name = "Deutsche Forschungsgemeinschaft (DFG)"
 identifier = "Project number 431549029"
 description = "SFB1451: Key mechanisms of motor control in health and disease"
+
+[license]
+[license.superdataset]
+name = "Individual, see datasets' terms"

@@ -2,12 +2,16 @@ import argparse
 import json
 from pathlib import Path
 
+import tomli
+
 from datalad.api import (
     catalog_add,
     catalog_set,
     catalog_translate,
     meta_extract,
 )
+from datalad_catalog.schema_utils import get_metadata_item
+from datalad_next.datasets import Dataset
 
 from utils import MyEncoder, postprocess
 
@@ -23,7 +27,7 @@ translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 # extract
 with extracted_path.open("w") as json_file:
-    for extractor_name in ("metalad_core", "metalad_studyminimeta"):
+    for extractor_name in ("metalad_core", "metalad_studyminimeta", "we_cff"):
         res = meta_extract(
             extractorname=extractor_name,
             dataset=args.dataset,
@@ -47,6 +51,25 @@ with translated_path.open("w") as json_file:
         metadata_item = postprocess(res)
         json.dump(metadata_item, json_file)
         json_file.write("\n")
+
+
+# inject (make manual additions)
+with open(Path(__file__).parent / "manually_entered.toml", "rb") as f:
+    manually_entered = tomli.load(f)
+
+ds = Dataset(args.dataset)
+handcrafted_item = get_metadata_item(
+    item_type="dataset",
+    dataset_id=ds.id,
+    dataset_version=ds.repo.get_hexsha(),
+    source_name="manual_addition",
+    source_version="0.1.0",
+)
+handcrafted_item["license"] = manually_entered["license"]["superdataset"]
+
+with translated_path.open("a") as json_file:
+    json.dump(handcrafted_item, json_file)
+    json_file.write("\n")
 
 # update catalog if requested
 if args.catalog is not None:
