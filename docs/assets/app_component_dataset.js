@@ -38,20 +38,19 @@ const datasetView = () =>
             citation_busy: false,
             citation_text: "",
             invalid_doi: false,
-            show_backbutton: false,
+            // show_backbutton: false,
           };
         },
         watch: {
           subdatasets_ready: function (newVal, oldVal) {
             if (newVal) {
-              console.log("subdatasets fetched!");
+              console.log("Watched property: subdatasets_ready = true")
+              console.log("Subdatasets have been fetched:");
               this.subdatasets = this.selectedDataset.subdatasets;
-              console.log("from watcher");
               console.log(this.subdatasets);
               tags = this.tag_options;
               if (this.subdatasets) {
                 this.subdatasets.forEach((subds, index) => {
-                  console.log(index + "; " + subds);
                   if (subds.available == "true" && subds.keywords) {
                     tags = tags.concat(
                       subds.keywords.filter((item) => tags.indexOf(item) < 0)
@@ -68,6 +67,8 @@ const datasetView = () =>
           dataset_ready: function (newVal, oldVal) {
             // TODO: some of these methods/steps should be moved to the generatpr tool. e.g. shortname
             if (newVal) {
+              console.log("Watched property: dataset_ready = true")
+              console.log("Active dataset:");
               dataset = this.selectedDataset;
               console.log(this.selectedDataset);
               disp_dataset = {};
@@ -298,6 +299,13 @@ const datasetView = () =>
             }
             return sorted;
           },
+          showBackButtonComp() {
+            if (this.currentIsHome()) {
+              return false
+            } else {
+              return true
+            }
+          }
         },
         methods: {
           newTabActivated(newTabIndex, prevTabIndex, bvEvent) {
@@ -311,9 +319,7 @@ const datasetView = () =>
             // https://www.sitepoint.com/clipboard-api/
             selectText = document.getElementById("clone_code").textContent;
             selectText = '\n      ' + selectText + '  \n\n  '
-            console.log(selectText)
             selectText = selectText.replace(/^\s+|\s+$/g, '');
-            console.log(selectText)
             navigator.clipboard
               .writeText(selectText)
               .then(() => {})
@@ -345,6 +351,9 @@ const datasetView = () =>
             }, 1000);
           },
           async selectDataset(event, obj, objId, objVersion, objPath) {
+            console.log("Inside selectDataset")
+            console.log(event)
+            event.preventDefault()
             var newBrowserTab = event.ctrlKey || event.metaKey || (event.button == 1)
             if (obj != null) {
               objId = obj.dataset_id;
@@ -604,6 +613,7 @@ const datasetView = () =>
           },
         },
         async beforeRouteUpdate(to, from, next) {
+          console.log("Executing navigation guard: beforeRouteUpdate")
           this.subdatasets_ready = false;
           this.dataset_ready = false;
 
@@ -747,15 +757,10 @@ const datasetView = () =>
             available_tabs_lower,
             this.$root.selectedDataset.config?.dataset_options?.default_tab
           )
-          // if navigated to using vue router (i.e. internal to the app), show the back button
-          if (this.currentIsHome()) {
-            this.$root.selectedDataset.show_backbutton = false
-          } else {
-            this.$root.selectedDataset.show_backbutton = true
-          }
           next();
         },
         async created() {
+          console.log("Executing lifecycle hook: created")
           // fetch superfile in order to set id and version on $root
           homefile = metadata_dir + "/super.json";
           homeresponse = await fetch(homefile);
@@ -886,6 +891,7 @@ const datasetView = () =>
           )
         },
         mounted() {
+          console.log("Executing lifecycle hook: mounted")
           this.tag_options_filtered = this.tag_options;
           this.tag_options_available = this.tag_options;
         }

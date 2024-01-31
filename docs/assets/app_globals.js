@@ -47,7 +47,6 @@ async function grabSubDatasets(app) {
           console.error(er);
           subds_json[index] = "unavailable";
         }
-        console.log(subds_json[index]);
       }
     })
   );

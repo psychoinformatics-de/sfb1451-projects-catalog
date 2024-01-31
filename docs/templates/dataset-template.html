@@ -8,7 +8,7 @@
             <span>
               <a @click="gotoHome" class="newlink"><small><i class="fas fa-home"></i></small></a>
             </span>
-            <span class="dataset-nav-item" v-if="selectedDataset.show_backbutton">
+            <span class="dataset-nav-item" v-if="showBackButtonComp">
               <a @click="history.back()" class="newlink"><small><i class="fas fa-backward"></i></small></a>
             </span>
           </span>
