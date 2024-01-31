@@ -265,7 +265,7 @@
                         <span class="xxlfont"><i class="fas fa-database"></i></span>
                       </b-col>
                       <b-col class="text-muted" md="7">
-                        <h5><a @click="selectDataset($event, ds)" class="newlink">{{ds.dirs_from_path.at(-1)}}</a></h5>
+                        <h5><a :href="'/dataset/'+ds.dataset_id+'/'+ds.dataset_version" @click.prevent="selectDataset($event, ds)" class="newlink">{{ds.dirs_from_path.at(-1)}}</a></h5>
                         <span v-for="(author, index) in ds.authors">
                           <small>
                             <span v-if="author.givenName">{{author.givenName}} {{author.familyName}}</span><span v-else>{{author.name}}</span><span v-if="index != ds.authors.length - 1">, </span>
