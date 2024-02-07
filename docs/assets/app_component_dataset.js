@@ -479,12 +479,21 @@ const datasetView = () =>
           gotoURL(url) {
             window.open(url);
           },
-          openWithBinder(dataset_url) {
+          openWithBinder(dataset_url, current_dataset) {
             const environment_url =
               "https://mybinder.org/v2/gh/datalad/datalad-binder/main";
-            const content_url = "https://github.com/jsheunis/datalad-notebooks";
-            const content_repo_name = "datalad-notebooks";
-            const notebook_name = "download_data_with_datalad_python.ipynb";
+            var content_url = "https://github.com/jsheunis/datalad-notebooks";
+            var content_repo_name = "datalad-notebooks";
+            var notebook_name = "download_data_with_datalad_python.ipynb";
+
+            if (current_dataset.hasOwnProperty("notebooks") && current_dataset.notebooks.length > 0) {
+              // until including the functionality to select from multiple notebooks in a dropdown, just select the first one
+              notebook = current_dataset.notebooks[0]
+              content_url = notebook.git_repo_url.replace(".git", "")
+              content_repo_name = content_url.substring(content_url.lastIndexOf('/') + 1)
+              notebook_name = notebook.notebook_path
+            }
+
             binder_url =
               environment_url +
               "?urlpath=git-pull%3Frepo%3D" +
