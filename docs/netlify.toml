@@ -1,4 +1,0 @@
-[[redirects]]
-  from = "/dataset/*"
-  to = "/index.html"
-  status = 200
