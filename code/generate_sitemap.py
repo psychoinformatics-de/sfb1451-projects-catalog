@@ -6,7 +6,7 @@ from datalad.api import (
 )
 
 base_url = "https://data.sfb1451.de/"
-base_dataset_url = "https://data.sfb1451.de/#/dataset/"
+base_dataset_url = "https://data.sfb1451.de/dataset/"
 
 def get_subdataset_urls(metadata, catalog_path):
     """"""
