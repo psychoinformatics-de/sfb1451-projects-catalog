@@ -2,12 +2,15 @@ import argparse
 import json
 from pathlib import Path
 
+import tomli
+
 from datalad.api import (
     catalog_add,
     catalog_translate,
     meta_extract,
 )
-
+from datalad_catalog.schema_utils import get_metadata_item
+from datalad_next.datasets import Dataset
 
 from list_files import list_files
 from utils import MyEncoder, postprocess
@@ -58,6 +61,25 @@ with translated_path.open("w") as json_file:
         metadata_item = postprocess(res)
         json.dump(metadata_item, json_file)
         json_file.write("\n")
+
+# see if there's some manual additions
+ds = Dataset(args.dataset)
+with open(Path(__file__).parent / "manually_entered.toml", "rb") as f:
+    manually_entered = tomli.load(f)
+
+if (additional := manually_entered["additional"].get(ds.id)) is not None:
+    basic_item = get_metadata_item(
+        item_type="dataset",
+        dataset_id=ds.id,
+        dataset_version=ds.repo.get_hexsha(),
+        source_name="manual_addition",
+        source_version="0.1.0",
+    )
+    handcrafted_item = basic_item | additional
+    with translated_path.open("w") as json_file:
+        json.dump(handcrafted_item, json_file)
+        json_file.write("\n")
+
 
 # extract file list if requested
 if args.files:

@@ -330,3 +330,10 @@ description = "SFB1451: Key mechanisms of motor control in health and disease"
 [license]
 [license.superdataset]
 name = "Individual, see datasets' terms"
+
+[additional]
+# B03 / externally-cued-movements
+[[additional.a808f9e1-d638-4771-ae4c-ff21da29151a.notebooks]]
+git_repo_url = "https://github.com/sfb1451/B03_externally-cued-movements"
+notebook_path = "code/example.ipynb"
+
