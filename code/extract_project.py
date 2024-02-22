@@ -77,7 +77,13 @@ handcrafted_item = get_metadata_item(
 project_name = args.dataset.name  # asume dataset.tld = project name
 if (keywords := manually_entered["keywords"].get(project_name)) is not None:
     handcrafted_item["keywords"] = keywords
-handcrafted_item["funding"] = manually_entered["funding"].get("sfb1451")
+
+sfb_grant = manually_entered["funding"]["sfb1451"]
+project_grant = manually_entered["funding"].get(project_name)
+
+handcrafted_item["funding"] = (
+    [sfb_grant, project_grant] if project_grant is not None else [sfb_grant]
+)
 
 with translated_path.open("a") as json_file:
     json.dump(handcrafted_item, json_file)
