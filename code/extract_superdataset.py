@@ -49,6 +49,10 @@ with translated_path.open("w") as json_file:
     ):
         assert res["status"] == "ok"  # crude check
         metadata_item = postprocess(res)
+
+        # actually let's ignore all funding and add manually later
+        _ = metadata_item.pop("funding", None)
+
         json.dump(metadata_item, json_file)
         json_file.write("\n")
 
@@ -66,10 +70,12 @@ handcrafted_item = get_metadata_item(
     source_version="0.1.0",
 )
 handcrafted_item["license"] = manually_entered["license"]["superdataset"]
+handcrafted_item["funding"] = [manually_entered["funding"]["sfb1451"]]
 
 with translated_path.open("a") as json_file:
     json.dump(handcrafted_item, json_file)
     json_file.write("\n")
+
 
 # update catalog if requested
 if args.catalog is not None:

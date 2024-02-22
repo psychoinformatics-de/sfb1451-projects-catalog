@@ -322,10 +322,188 @@ Z02 = "Animal Motor Circuits Core Facility"
 Z03 = "Human Motor Assessment Centre"
 
 [funding]
-[[funding.sfb1451]]
-name = "Deutsche Forschungsgemeinschaft (DFG)"
-identifier = "Project number 431549029"
-description = "SFB1451: Key mechanisms of motor control in health and disease"
+
+[funding.sfb1451]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "SFB 1451: Key mechanisms of motor control in health and disease"
+identifier = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A01]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Understanding plastin 3 and its interactors in motor neuron function and plasticity in health and disease"
+alternateName = "A01"
+identifier = "https://gepris.dfg.de/gepris/projekt/458620544"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A02]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Dysregulation of the autophagy-endolysosomal system as a putative pathological mechanism behind the motor control dysfunction"
+alternateName = "A02"
+identifier = "https://gepris.dfg.de/gepris/projekt/458627899"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A03]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Motor learning-induced plasticity of cerebellar Purkinje neuron connectivity"
+alternateName = "A03"
+identifier = "https://gepris.dfg.de/gepris/projekt/458628816"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A04]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "The role of the reward system in obesity- and ageing-associated changes of motor behaviours"
+alternateName = "A04"
+identifier = "https://gepris.dfg.de/gepris/projekt/458630481"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A05]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Neural mechanisms underlying motor flexibility in fruit fly walking"
+alternateName = "A05"
+identifier = "https://gepris.dfg.de/gepris/projekt/458631052"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A06]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Sensory-motor pathways controlling voluntary movements in health and disease"
+alternateName = "A06"
+identifier = "https://gepris.dfg.de/gepris/projekt/458633663"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.A07]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Role of synaptic lipid modulated cortical excitability in motor control"
+alternateName = "A07"
+identifier = "https://gepris.dfg.de/gepris/projekt/470703892"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.B01]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Developmental mechanisms affecting motor skills and motor control"
+alternateName = "B01"
+identifier = "https://gepris.dfg.de/gepris/projekt/458636148"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.B02]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Neural network maturation underlying top-down motor control and movement initiation in childhood and adolescence"
+alternateName = "B02"
+identifier = "https://gepris.dfg.de/gepris/projekt/458637144"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.B03]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Modelling neural network dynamics underlying movements in health and disease"
+alternateName = "B03"
+identifier = "https://gepris.dfg.de/gepris/projekt/458638358"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.B04]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Motor control under uncertainty in the healthy human brain"
+alternateName = "B04"
+identifier = "https://gepris.dfg.de/gepris/projekt/458639706"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.B05]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Single-case predictions of motor abilities in health and disease"
+alternateName = "B05"
+identifier = "https://gepris.dfg.de/gepris/projekt/458640473"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C01]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Identification and selective stimulation of motor recovery-related functional networks after experimental stroke"
+alternateName = "C01"
+identifier = "https://gepris.dfg.de/gepris/projekt/458642074"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C03]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Striatal dopamine and volitional motor control: vigour, planning, and incentive salience "
+alternateName = "C03"
+identifier = "https://gepris.dfg.de/gepris/projekt/458646297"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C04]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Apraxia in Alzheimer’s disease: Plastic reorganization of praxis networks in response to chronically progressive dysfunction"
+alternateName = "C04"
+identifier = "https://gepris.dfg.de/gepris/projekt/458674749"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C05]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Reorganisation of the motor system following stroke"
+alternateName = "C05"
+identifier = "https://gepris.dfg.de/gepris/projekt/458684554"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C06]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Major depression as a transient functional lesion model of motor control"
+alternateName = "C06"
+identifier = "https://gepris.dfg.de/gepris/projekt/458685554"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.C07]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Neural networks underlying motor tic formation and suppression"
+alternateName = "C07"
+identifier = "https://gepris.dfg.de/gepris/projekt/458687122"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.INF]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Data Managment"
+alternateName = "INF"
+identifier = "https://gepris.dfg.de/gepris/projekt/458705875"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.Z01]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Central Office"
+alternateName = "Z01"
+identifier = "https://gepris.dfg.de/gepris/projekt/458691909"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.Z02]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Animal Motor Core Facility"
+alternateName = "Z02"
+identifier = "https://gepris.dfg.de/gepris/projekt/458701226"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
+
+[funding.Z03]
+funder = "Deutsche Forschungsgemeinschaft (DFG)"
+name = "Humanes Motor-Assesment Center"
+alternateName = "Z03"
+identifier = "https://gepris.dfg.de/gepris/projekt/458705014"
+isPartOf = "https://gepris.dfg.de/gepris/projekt/431549029"
+"@type" = "https://schema.org/Grant"
 
 [license]
 [license.superdataset]
