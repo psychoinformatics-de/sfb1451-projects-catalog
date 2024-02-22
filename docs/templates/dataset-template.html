@@ -351,6 +351,9 @@
                         <template v-if="fund.alternateName">
                           <span><small><strong>Alternate name: </strong>{{fund.alternateName}}</small></span><br>
                         </template>
+                        <span v-if="fund.description">
+                          <small><strong>Description:</strong> {{fund.description}}</small><br>
+                        </span>
                         <span v-if="fund.identifier">
                           <template v-if="fund.identifier.startsWith('http')">
                             <small><strong>Grant identifier:</strong> <a :href="fund.identifier">{{fund.identifier}}</a></small><br>
@@ -358,6 +361,12 @@
                           <template v-else>
                             <small><strong>Grant identifier:</strong> {{fund.identifier}}</small><br>
                           </template>
+                        </span>
+                        <span v-if="fund.url">
+                          <small><strong>URL:</strong> <a :href="fund.url">{{fund.url}}</a></small><br>
+                        </span>
+                        <span v-if="fund.sameAs">
+                          <small><strong>Same as:</strong> <a :href="fund.sameAs">{{fund.sameAs}}</a></small><br>
                         </span>
                       </b-col>
                     </b-row>
