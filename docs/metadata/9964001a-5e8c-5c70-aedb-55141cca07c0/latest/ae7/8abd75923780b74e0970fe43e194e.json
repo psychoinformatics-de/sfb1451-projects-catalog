@@ -1,1 +1,0 @@
-{"type": "directory", "dataset_id": "9964001a-5e8c-5c70-aedb-55141cca07c0", "dataset_version": "latest", "children": [{"type": "directory", "name": "DICOM", "path": "sourcedata/DICOM", "dataset_id": "9964001a-5e8c-5c70-aedb-55141cca07c0", "dataset_version": "latest"}], "path": "sourcedata", "name": "sourcedata"}
