@@ -13,7 +13,7 @@ from datalad_catalog.schema_utils import get_metadata_item
 from datalad_next.datasets import Dataset
 
 from list_files import list_files
-from utils import MyEncoder, postprocess
+from utils import MyEncoder
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
@@ -50,7 +50,7 @@ with extracted_path.open("w") as json_file:
         json.dump(res["metadata_record"], json_file, cls=MyEncoder)
         json_file.write("\n")
 
-# translate + postprocess
+# translate
 translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 with translated_path.open("w") as json_file:
@@ -58,7 +58,7 @@ with translated_path.open("w") as json_file:
         metadata=extracted_path, catalog=None, return_type="generator"
     ):
         assert res["status"] == "ok"  # crude check
-        metadata_item = postprocess(res)
+        metadata_item = res["translated_metadata"]
         json.dump(metadata_item, json_file)
         json_file.write("\n")
 

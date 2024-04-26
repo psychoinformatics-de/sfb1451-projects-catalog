@@ -13,7 +13,7 @@ from datalad.api import (
 from datalad_catalog.schema_utils import get_metadata_item
 from datalad_next.datasets import Dataset
 
-from utils import MyEncoder, postprocess
+from utils import MyEncoder
 
 
 parser = argparse.ArgumentParser()
@@ -27,7 +27,7 @@ translated_path = extracted_path.with_suffix(".cat.jsonl")
 
 # extract
 with extracted_path.open("w") as json_file:
-    for extractor_name in ("metalad_core", "metalad_studyminimeta", "we_cff"):
+    for extractor_name in ("metalad_core", "we_cff"):
         res = meta_extract(
             extractorname=extractor_name,
             dataset=args.dataset,
@@ -48,7 +48,7 @@ with translated_path.open("w") as json_file:
         result_renderer="disabled",
     ):
         assert res["status"] == "ok"  # crude check
-        metadata_item = postprocess(res)
+        metadata_item = res["translated_metadata"]
 
         # actually let's ignore all funding and add manually later
         _ = metadata_item.pop("funding", None)
