@@ -1,0 +1,63 @@
+[20bc6743-827d-4cbf-af60-38add7f55bc5]
+name = "2021_Ye_Ji_carbon_nanotubes_differentiation"
+project = "A07"
+
+[ebf6852a-ff0c-45c7-99f9-ab7910b084d9]
+name = "2022_Bitar_ATX_stroke"
+project = "A07"
+
+[fd41dcd4-0215-4aef-8706-6e97c136c97f]
+name = "2022_Endle_LPA_feeding_control"
+project = "A07"
+
+[83b73949-b6c3-4b2b-81b2-cc3f7236a048]
+name = "2023_Blaschke_Stroke_tDCS_rsfMRI"
+project = "C01"
+
+[945795a4-f4d0-43dc-b51a-e73a79ae8d47]
+name = "2023_Goetz_RecoveryGenes"
+project = "C01"
+
+[8ef5a758-77f1-4ce3-b0ed-0507c9dd25b3]
+name = "2023_Kalantari_DataladExampleDataset"
+project = "C01"
+
+[4ac2694c-bffb-48ce-8052-cdb6285fc2e7]
+name = "2023_Stokowska_Periinfarct"
+project = "C01"
+
+[dd5da8d4-38c6-4890-809a-2355cfb18d91]
+name = "C03_DoMoCo"
+project = "C03"
+
+[8b7f2fa5-0616-43b1-b335-7a4171502604]
+name = "FFLearning"
+project = "A06"
+
+[ee7cbadc-958f-40f2-85f9-8c75835047fd]
+name = "GCAMP7-OTC-AP-2KO_ataxia_model-data"
+project = "A02"
+
+[7d4af6bf-683d-4580-856a-6c0502dd01e5]
+name = "GCAMP7-OTC-AP-2KO_ataxia_model-image-stacks"
+project = "A02"
+
+[c1092bba-56bc-4279-b33f-c152312b3bed]
+name = "GCAMP7-OTC-AP-2KO_ataxia_model-plots"
+project = "A02"
+
+[a808f9e1-d638-4771-ae4c-ff21da29151a]
+name = "externally-cued-movements"
+project = "B03"
+
+[088c451d-6a4f-4c16-83d4-947820728847]
+name = "longitudinal-resting-eeg"
+project = "B03"
+
+[78b6be24-01f6-4abe-8d02-cdfe2fbc9751]
+name = "motor-assessment-aggregate"
+project = "Z03"
+
+[59e2911c-895d-4405-841a-3ce3f17d1b72]
+name = "mouse-kinematics"
+project = "Z02"
