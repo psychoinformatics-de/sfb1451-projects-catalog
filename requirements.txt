@@ -1,5 +1,5 @@
-datalad >= 0.18.3
-datalad-next >= 1.0.0b2
+datalad >= 0.19.1
+datalad-next >= 1.3
 datalad-metalad >= 0.4.16
 datalad-wackyextra @ git+https://github.com/mslw/datalad-wackyextra.git@main
 datalad-catalog @ git+https://github.com/datalad/datalad-catalog@main
