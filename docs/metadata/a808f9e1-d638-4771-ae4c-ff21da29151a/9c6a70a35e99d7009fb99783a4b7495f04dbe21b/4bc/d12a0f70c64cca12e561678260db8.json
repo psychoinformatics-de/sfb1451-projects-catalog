@@ -1,0 +1,1 @@
+{"type": "directory", "dataset_id": "a808f9e1-d638-4771-ae4c-ff21da29151a", "dataset_version": "9c6a70a35e99d7009fb99783a4b7495f04dbe21b", "children": [{"type": "directory", "name": "eeg", "path": "sub-011/eeg", "dataset_id": "a808f9e1-d638-4771-ae4c-ff21da29151a", "dataset_version": "9c6a70a35e99d7009fb99783a4b7495f04dbe21b"}], "path": "sub-011", "name": "sub-011"}

@@ -1,0 +1,1 @@
+{"type": "directory", "dataset_id": "8b7f2fa5-0616-43b1-b335-7a4171502604", "dataset_version": "0a0570c6efe8a5af65448548ebe7a7bbea011a6a", "children": [{"type": "directory", "name": "self", "path": ".datalad/tabby/self", "dataset_id": "8b7f2fa5-0616-43b1-b335-7a4171502604", "dataset_version": "0a0570c6efe8a5af65448548ebe7a7bbea011a6a"}], "path": ".datalad/tabby", "name": "tabby"}
