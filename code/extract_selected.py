@@ -77,7 +77,7 @@ if (additional := manually_entered["additional"].get(ds.id)) is not None:
         source_version="0.1.0",
     )
     handcrafted_item = basic_item | additional
-    with translated_path.open("w") as json_file:
+    with translated_path.open("a") as json_file:
         json.dump(handcrafted_item, json_file)
         json_file.write("\n")
 
@@ -103,7 +103,7 @@ if args.gindoi:
             source_version="0.1.0",
         )
         new_item = basic_item | {"doi": doi}
-        with translated_path.open("w") as json_file:
+        with translated_path.open("a") as json_file:
             json.dump(new_item, json_file)
             json_file.write("\n")
 
