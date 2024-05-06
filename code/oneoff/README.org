@@ -1,0 +1,2 @@
+This folder stores ad-hoc scripts created to be using once.
+Refer to the top level comments for details.

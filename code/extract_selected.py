@@ -13,13 +13,14 @@ from datalad_catalog.schema_utils import get_metadata_item
 from datalad_next.datasets import Dataset
 
 from list_files import list_files
-from utils import MyEncoder
+from utils import MyEncoder, find_gin_doi
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=Path, help="Dataset to extract from")
 parser.add_argument("outdir", type=Path, help="Metadata output directory")
 parser.add_argument("-c", "--catalog", type=Path, help="Catalog to add metadata to")
 parser.add_argument("--files", action="store_true", help="Also list files")
+parser.add_argument("--gindoi", action="store_true", help="Also try to look up GIN doi")
 parser.add_argument(
     "--filename",
     help="Use this file name instead of deriving from folder names",
@@ -76,7 +77,7 @@ if (additional := manually_entered["additional"].get(ds.id)) is not None:
         source_version="0.1.0",
     )
     handcrafted_item = basic_item | additional
-    with translated_path.open("w") as json_file:
+    with translated_path.open("a") as json_file:
         json.dump(handcrafted_item, json_file)
         json_file.write("\n")
 
@@ -89,6 +90,23 @@ if args.files:
         for metadata_item in list_files(args.dataset):
             json.dump(metadata_item, json_file)
             json_file.write("\n")
+
+
+# If requested and origin is on GIN, search for DOI on GIN website
+if args.gindoi:
+    if (doi := find_gin_doi(ds)) is not None:
+        basic_item = get_metadata_item(
+            item_type="dataset",
+            dataset_id=ds.id,
+            dataset_version=ds.repo.get_hexsha(),
+            source_name="gin_website",
+            source_version="0.1.0",
+        )
+        new_item = basic_item | {"doi": doi}
+        with translated_path.open("a") as json_file:
+            json.dump(new_item, json_file)
+            json_file.write("\n")
+
 
 # update catalog if requested
 if args.catalog is not None:
