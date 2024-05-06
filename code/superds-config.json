@@ -10,7 +10,7 @@
     "x": "https://twitter.com/crc1451"
   },
   "dataset_options": {
-    "default_tab": "subdatasets",
+    "default_tab": "datasets",
     "include_metadata_export": false
   },
   "property_sources": {
