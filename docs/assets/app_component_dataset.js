@@ -57,6 +57,9 @@ const datasetView = () =>
                       subds.keywords.filter((item) => tags.indexOf(item) < 0)
                     );
                   }
+                  if (subds.available) {
+                      subds.display_name = subds.name ? subds.name : subds.dirs_from_path.at(-1);
+                  }
                 });
               }           
               this.tag_options = tags;
@@ -319,9 +322,9 @@ const datasetView = () =>
             return all_subdatasets.filter((c) => {
               if (this.search_text == "") return true;
               return (
-                c.dirs_from_path[c.dirs_from_path.length - 1]
+                c.display_name
                   .toLowerCase()
-                  .indexOf(this.search_text.toLowerCase()) >= 0 ||
+                  .includes(this.search_text.toLowerCase()) ||
                 c.authors.some(
                   (f) =>
                   f.givenName && f.givenName.toLowerCase().indexOf(this.search_text.toLowerCase()) >= 0 
@@ -348,19 +351,9 @@ const datasetView = () =>
             subdatasets = this.tagFilteredSubdatasets;
             if (this.sort_name_or_modified) {
               if (this.sort_name) {
-                sorted = subdatasets.sort((a, b) =>
-                  a.dirs_from_path[a.dirs_from_path.length - 1] >
-                  b.dirs_from_path[b.dirs_from_path.length - 1]
-                    ? 1
-                    : -1
-                );
+                  sorted = subdatasets.sort((a, b) => a.display_name.localeCompare(b.display_name));
               } else {
-                sorted = subdatasets.sort((a, b) =>
-                  a.dirs_from_path[a.dirs_from_path.length - 1] <
-                  b.dirs_from_path[b.dirs_from_path.length - 1]
-                    ? 1
-                    : -1
-                );
+                  sorted = subdatasets.sort((a, b) => b.display_name.localeCompare(a.display_name));
               }
             } else {
               if (this.sort_modified) {
