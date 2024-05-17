@@ -1,0 +1,7 @@
+* Patches
+
+This document lists patches which were applied to the catalog internals but have not been contributed upstream.
+It is maintained to provide an explicit way to track customizations, in addition to relying on git log and diff.
+
+- Display subdataset titles instead of their directory names, b8b439a352ac954b7934b3400b60f5e597ee340d (PR #99)
+- Add DOI badge to subdataset view, 312081ab4d53a81dc75fff3aed8c6647e0350614 (PR #100)
