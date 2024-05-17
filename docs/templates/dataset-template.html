@@ -326,6 +326,7 @@
                       </b-col>
                       <b-col class="text-muted" md="7">
                         <h5><a :href="'/dataset/'+ds.dataset_id+'/'+ds.dataset_version" @click.prevent="selectDataset($event, ds)" class="newlink">{{ds.display_name}}</a></h5>
+                        <span v-if="ds.doi"><a :href="ds.doi"><img :src="'https://badgen.net/badge/DOI/' + encodeURIComponent(ds.doi?.replace('https://doi.org/', '')) + '?color=1f99d6&labelColor=142f64'"></a><br></span>
                         <span v-for="(author, index) in ds.authors">
                           <small>
                             <span v-if="author.givenName">{{author.givenName}} {{author.familyName}}</span><span v-else>{{author.name}}</span><span v-if="index != ds.authors.length - 1">, </span>
