@@ -1,0 +1,1 @@
+{"type": "directory", "dataset_id": "bfe12f51-3f30-4ceb-b4de-9b6f85f2ef6c", "dataset_version": "8a0b9f43fd6c09cc03b7a5ad0b9fe7f4673e7e30", "children": [{"type": "dataset", "name": "joe_and_lili", "path": "inputs/joe_and_lili", "dataset_id": "6d3cb1ac-967f-40a2-9c0e-ddd11b170f3f", "dataset_version": "6a22a256bd6e06adef3a8646e820aa65f9114f83"}], "path": "inputs", "name": "inputs"}
