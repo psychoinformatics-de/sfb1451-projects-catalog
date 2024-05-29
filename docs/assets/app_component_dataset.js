@@ -228,7 +228,7 @@ const datasetView = () =>
               }
               // Show / hide binder button: if disp_dataset.url exists OR if dataset has a notebook specified in metadata
               disp_dataset.show_binder_button = false
-              if ( disp_dataset.url || disp_dataset.hasOwnProperty("notebooks") && disp_dataset.notebooks.length > 0 ) {
+              if ( disp_dataset.url || dataset.hasOwnProperty("notebooks") && dataset.notebooks.length > 0 ) {
                 disp_dataset.show_binder_button = true
               }
 
@@ -296,7 +296,7 @@ const datasetView = () =>
               scripttag.textContent = JSON.stringify(pruneObject(obj));
 
               dataset_id_path = getFilePath(this.selectedDataset.dataset_id)
-              fetch(dataset_id_path)
+              fetch(dataset_id_path, {cache: "no-cache"})
                 .then((response) => {
                   if(response.status == 404) {
                     this.selectedDataset.has_id_path = false
@@ -747,18 +747,24 @@ const datasetView = () =>
             window.open(url);
           },
           openWithBinder(dataset_url, current_dataset) {
-            const environment_url =
+            var environment_url =
               "https://mybinder.org/v2/gh/datalad/datalad-binder/main";
             var content_url = "https://github.com/jsheunis/datalad-notebooks";
             var content_repo_name = "datalad-notebooks";
             var notebook_name = "download_data_with_datalad_python.ipynb";
+            var has_custom_notebook = false;
             if (current_dataset.hasOwnProperty("notebooks") && current_dataset.notebooks.length > 0) {
               // until including the functionality to select from multiple notebooks in a dropdown, just select the first one
+              has_custom_notebook = true
               notebook = current_dataset.notebooks[0]
               content_url = notebook.git_repo_url.replace(".git", "")
               content_repo_name = content_url.substring(content_url.lastIndexOf('/') + 1)
-              notebook_name = notebook.notebook_path
+              notebook_name = escapeHTML(notebook.notebook_path)
+              if (notebook.hasOwnProperty("binder_env_url") && notebook["binder_env_url"]) {
+                environment_url = notebook["binder_env_url"]
+              }
             }
+
             binder_url =
               environment_url +
               "?urlpath=git-pull%3Frepo%3D" +
@@ -766,10 +772,14 @@ const datasetView = () =>
               "%26urlpath%3Dnotebooks%252F" +
               content_repo_name +
               "%252F" +
-              notebook_name +
-              "%3Frepourl%3D%22" +
-              dataset_url +
-              "%22";
+              notebook_name;
+
+            if (!has_custom_notebook) {
+              binder_url = binder_url +
+                "%3Frepourl%3D%22" +
+                dataset_url +
+                "%22"
+            }
             window.open(binder_url);
           },
           sortByName() {
@@ -832,7 +842,7 @@ const datasetView = () =>
             this.files_ready = false;
             file_hash = this.selectedDataset.children;
             file = metadata_dir + "/" + file_hash + ".json";
-            response = await fetch(file);
+            response = await fetch(file, {cache: "no-cache"});
             text = await response.text();
             obj = JSON.parse(text);
             this.$root.selectedDataset.tree = obj["children"];
@@ -902,7 +912,7 @@ const datasetView = () =>
           this.subdatasets_ready = false;
           this.dataset_ready = false;
           file = getFilePath(to.params.dataset_id, to.params.dataset_version, null);
-          response = await fetch(file);
+          response = await fetch(file, {cache: "no-cache"});
           text = await response.text();
           response_obj = JSON.parse(text);
           // if the object.type is redirect (i.e. the url parameter is an alias for or ID
@@ -1044,7 +1054,7 @@ const datasetView = () =>
           this.$root.selectedDataset.available_tabs = available_tabs_lower
           // Now get dataset config if it exists
           dataset_config_path = metadata_dir + "/" + sDs.dataset_id + "/" + sDs.dataset_version + "/config.json";
-          configresponse = await fetch(dataset_config_path);
+          configresponse = await fetch(dataset_config_path, {cache: "no-cache"});
           if (configresponse.status == 404) {
             this.$root.selectedDataset.config = {};
           } else {
@@ -1069,7 +1079,7 @@ const datasetView = () =>
           console.debug("Executing lifecycle hook: created")
           // fetch superfile in order to set id and version on $root
           homefile = metadata_dir + "/super.json";
-          homeresponse = await fetch(homefile);
+          homeresponse = await fetch(homefile, {cache: "no-cache"});
           if (homeresponse.status == 404) {
             this.$root.home_dataset_id = null;
             this.$root.home_dataset_version = null;
@@ -1085,7 +1095,7 @@ const datasetView = () =>
             null
           );
           var app = this.$root;
-          response = await fetch(file);
+          response = await fetch(file, {cache: "no-cache"});
           // Reroute to 404 if the dataset file is not found
           if (response.status == 404) {
             router.push({
@@ -1199,7 +1209,7 @@ const datasetView = () =>
           this.$root.selectedDataset.available_tabs = available_tabs_lower
           // Now get dataset config if it exists
           dataset_config_path = metadata_dir + "/" + sDs.dataset_id + "/" + sDs.dataset_version + "/config.json";
-          configresponse = await fetch(dataset_config_path);
+          configresponse = await fetch(dataset_config_path, {cache: "no-cache"});
           if (configresponse.status == 404) {
             this.$root.selectedDataset.config = {};
           } else {
