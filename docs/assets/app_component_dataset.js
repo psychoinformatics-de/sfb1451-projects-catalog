@@ -228,7 +228,7 @@ const datasetView = () =>
               }
               // Show / hide binder button: if disp_dataset.url exists OR if dataset has a notebook specified in metadata
               disp_dataset.show_binder_button = false
-              if ( disp_dataset.url || disp_dataset.hasOwnProperty("notebooks") && disp_dataset.notebooks.length > 0 ) {
+              if ( disp_dataset.url || dataset.hasOwnProperty("notebooks") && dataset.notebooks.length > 0 ) {
                 disp_dataset.show_binder_button = true
               }
 
@@ -755,6 +755,11 @@ const datasetView = () =>
             if (current_dataset.hasOwnProperty("notebooks") && current_dataset.notebooks.length > 0) {
               // until including the functionality to select from multiple notebooks in a dropdown, just select the first one
               notebook = current_dataset.notebooks[0]
+              if (notebook.hasOwnProperty("binder_link") && notebook.binder_link.length > 0) {
+                // full override
+                window.open(notebook.binder_link);
+                return;
+              }
               content_url = notebook.git_repo_url.replace(".git", "")
               content_repo_name = content_url.substring(content_url.lastIndexOf('/') + 1)
               notebook_name = notebook.notebook_path
