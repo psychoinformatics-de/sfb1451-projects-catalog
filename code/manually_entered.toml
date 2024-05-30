@@ -514,4 +514,8 @@ name = "Individual, see datasets' terms"
 [[additional.a808f9e1-d638-4771-ae4c-ff21da29151a.notebooks]]
 git_repo_url = "https://github.com/sfb1451/B03_externally-cued-movements"
 notebook_path = "code/example.ipynb"
-
+# A06 / delayed_center-out_uncertainty_Riehle
+[[additional.5616174f-e154-42b2-a623-50c96a102c27.notebooks]]
+git_repo_url=""
+notebook_path=""
+binder_link="https://mybinder.org/v2/gh/sfb1451/rostami_etal_2024-demo/HEAD?labpath=Demo.ipynb"
