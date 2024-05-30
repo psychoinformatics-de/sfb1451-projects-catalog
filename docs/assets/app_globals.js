@@ -126,7 +126,3 @@ function pruneObject(obj) {
   return newObj;
 }
 
-
-function escapeHTML(str){
-    return new Option(str).innerHTML;
-}
